@@ -7,14 +7,21 @@ Pulls data from Y Combinator's HackerNews public API
 Rails, React, Docker
 * What does it do?
 Provides an alternative UI to HackerNews, for funsies
-* TODO [1/2] Project Roadmap
+* TODO [1/3] Project Roadmap
 ** DONE [2/2] Get project bootstrapped
 - [X] Set up Docker
 - [X] Run =bundle install= and save Gemfile.lock. Once we have something in the
   Gemfile, run docker build. Then you can run something like =docker compose run
   --build --rm -v "$PWD":/app -w /app app bundle install=.
-** TODO Rails in Docker set up, +javascript
-- [ ] Run =rails new= with whatever flags I think will be suitable. This decision is important.
+** TODO [#A] [0/1] Rails in Docker set up, +javascript, +tests, +styling
+- [ ] [0/5] Run =rails new= with whatever flags I think will be suitable. This
+  decision is important.
+  - [ ] JavaScript
+  - [ ] Styling
+  - [ ] Linter
+  - [ ] Tests
+  - [ ] Database
+** TODO [#B] Design Features
 * Notes
 To convert this document to Markdown, run =pandoc --from=org --to=gfm README.org
 > README.md=
