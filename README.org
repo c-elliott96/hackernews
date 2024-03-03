@@ -15,3 +15,6 @@ Provides an alternative UI to HackerNews, for funsies
   --build --rm -v "$PWD":/app -w /app app bundle install=.
 ** TODO Rails in Docker set up, +javascript
 - [ ] Run =rails new= with whatever flags I think will be suitable. This decision is important.
+* Notes
+To convert this document to Markdown, run =pandoc --from=org --to=gfm README.org
+> README.md=
