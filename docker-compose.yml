@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      args:
+        RUBY_VERSION: 3.3 # latest stable
+        RAILS_VERSION: 7.1
+    volumes:
+      - ./:/app
