@@ -3,25 +3,52 @@
 
 * What is this project?
 Pulls data from Y Combinator's HackerNews public API
+
+This project is designed to be a fully-deployed, fully-featured application made
+with Ruby on Rails, vanilla CSS, ReactJS, and Docker for containerization.
+Ideally, I investigate every feature of each element of my stack and see if I
+can find a way to use it. This is an unrealistic goal, but perhaps the ideal
+one.
 * What is it made of?
-Rails, React, Docker
+Rails, React, Docker, CSS, one or many databases (TBD),
 * What does it do?
 Provides an alternative UI to HackerNews, for funsies
-* TODO [1/3] Project Roadmap
+* TODO [1/4] Project Roadmap
 ** DONE [2/2] Get project bootstrapped
+:COMPLETED: [2024-03-04 Mon]
 - [X] Set up Docker
 - [X] Run =bundle install= and save Gemfile.lock. Once we have something in the
   Gemfile, run docker build. Then you can run something like =docker compose run
   --build --rm -v "$PWD":/app -w /app app bundle install=.
-** TODO [#A] [0/1] Rails in Docker set up, +javascript, +tests, +styling
-- [ ] [0/5] Run =rails new= with whatever flags I think will be suitable. This
-  decision is important.
-  - [ ] JavaScript
-  - [ ] Styling
-  - [ ] Linter
-  - [ ] Tests
-  - [ ] Database
+** TODO [#A] [0/1] Initial Rails in Docker set up, +javascript, +tests, +styling
+*** TODO [0/5] Run =rails new= with whatever flags I think will be suitable
+This decision is important.
+**** TODO JavaScript
+**** TODO Template
+[[https://rubydoc.info/gems/slim/file/README.md][slim]] seems like a resonable choice, for no real good reason.
+**** TODO Styling
+Vanilla CSS, or package congolmerate? For the sake of learning, probably should
+use vanilla CSS. Kill me.
+**** TODO Tests
+**** TODO Anything else?
+*** TODO Linter
+**** [[https://rubocop.org/][rubocop]] for Ruby
+**** [[https://eslint.org/][eslint]] for JS/React
+**** [[slim-lint][slim-lint]] for linting slim files
+*** TODO Tests
+rspec unit tests for back end; capybara tests too?
+*** TODO Database(s)
+I don't yet know where a DB will be used in my application, but I'll likely need
+it. Figure out what needs to be done to secure data at rest and in transport
+*** TODO Decide on logger
+** TODO [0/4] Deployment --  configuration and redundancy
+It's docker. How's the image deployed?
+*** TODO Test Suite(s)
+*** TODO Deployment
+*** TODO Networking
+*** TODO Pipeline
 ** TODO [#B] Design Features
+TODO. Make use of Rails, React features for practice
 * Notes
 To convert this document to Markdown, run =pandoc --from=org --to=gfm README.org
 > README.md=
