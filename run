@@ -73,6 +73,11 @@ function hadolint {
     hadolint/hadolint hadolint --ignore DL3008 -t style "${@}" - < Dockerfile
 }
 
+function lint {
+  # TODO: Add js-lint
+  ruby-lint
+}
+
 function ruby-lint {
   # Run with -a to autocorrect
   local autocorrect="${1:-}"
@@ -175,6 +180,7 @@ function ci:test {
   docker compose logs
 
   rails db:setup
+  rub-lint
   test -b
 }
 
