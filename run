@@ -80,6 +80,7 @@ function lint {
 
 function ruby-lint {
   # Run with -a to autocorrect
+  # shellcheck disable=SC2119
   local autocorrect="${1:-}"
   local lint_command="rubocop"
 
