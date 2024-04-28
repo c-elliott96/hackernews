@@ -180,7 +180,7 @@ function ci:test {
   docker compose logs
 
   rails db:setup
-  rub-lint
+  ruby-lint
   test -b
 }
 
