@@ -10,8 +10,26 @@ For details on the project's base Rails and Docker configurations, see the [`doc
 
 Project TODOs go here. They could link to GitHub issues, if I so desire.
 
-* [X] TODO: Bootstrap project
+* [X] Bootstrap project
 
-* [ ] TODO: Retrieve HackerNews data via the API
+  Start with the docker-rails-example
 
-* [ ] TODO: Plan main page
+* [X] Retrieve HackerNews data via the API
+
+  Create `app/services/hacker_news.rb` to handle API requests
+
+* [X] Add services/HackerNews tests
+
+  Add `test/services/hacker_news_test.rb` to test service. In the future I'd
+  like to swap RSpec for Minitest.
+
+* [X] Add ruby lint command to `run`
+
+* [ ] Plan main page
+
+  Should mimic news.ycombinator.com landing page. This will inform controller
+  design and model relationships.
+
+* [ ] Add models
+
+* [ ] Remove DB and associated tooling unless needed

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative "boot"
 
 require "rails/all"
@@ -7,23 +9,23 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 module Hackernews
-  class Application < Rails::Application
+  class Application < Rails::Application # rubocop:disable Style/Documentation
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
     # Please, see:
     #   https://guides.rubyonrails.org/autoloading_and_reloading_constants.html#config-autoload-lib-ignore.
-    config.autoload_lib(ignore: %w(assets tasks))
+    config.autoload_lib(ignore: %w[assets tasks])
 
     # Log to STDOUT because Docker expects all processes to log here. You could
     # then collect logs using journald, syslog or forward them somewhere else.
-    config.logger = ActiveSupport::Logger.new(STDOUT)
-      .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-      .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
+    config.logger = ActiveSupport::Logger.new($stdout)
+                                         .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
+                                         .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
 
     # Set Redis as the back-end for the cache.
     config.cache_store = :redis_cache_store, {
-      url: ENV.fetch("REDIS_URL") { "redis://redis:6379/1" },
+      url: ENV.fetch("REDIS_URL", "redis://redis:6379/1"),
       namespace: "cache"
     }
 
@@ -32,10 +34,10 @@ module Hackernews
 
     # Mount Action Cable outside the main process or domain.
     config.action_cable.mount_path = nil
-    config.action_cable.url = ENV.fetch("ACTION_CABLE_FRONTEND_URL") { "ws://localhost:28080" }
+    config.action_cable.url = ENV.fetch("ACTION_CABLE_FRONTEND_URL", "ws://localhost:28080")
 
     # Only allow connections to Action Cable from these domains.
-    origins = ENV.fetch("ACTION_CABLE_ALLOWED_REQUEST_ORIGINS") { "http:\/\/localhost*" }.split(",")
+    origins = ENV.fetch("ACTION_CABLE_ALLOWED_REQUEST_ORIGINS", "http:\/\/localhost*").split(",")
     origins.map! { |url| /#{url}/ }
     config.action_cable.allowed_request_origins = origins
   end

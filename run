@@ -73,6 +73,18 @@ function hadolint {
     hadolint/hadolint hadolint --ignore DL3008 -t style "${@}" - < Dockerfile
 }
 
+function ruby-lint {
+  # Run with -a to autocorrect
+  local autocorrect="${1:-}"
+  local lint_command="rubocop"
+
+  if [ "${autocorrect}" = "-a" ]; then
+    lint_command="rubocop -a"
+  fi
+
+  _dc js bash -c "${lint_command}"
+}
+
 function bundle:install {
   # Install Ruby dependencies and write out a lock file
   _build_run_down web bundle install

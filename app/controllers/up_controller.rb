@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# For healthchecks
 class UpController < ApplicationController
   def index
     head :ok

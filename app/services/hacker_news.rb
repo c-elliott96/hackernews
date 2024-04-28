@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'httparty'
+require "httparty"
 
 # Handles HackerNews API (v0) requests, with custom Errors
 #
@@ -11,7 +11,7 @@ module HackerNews
   class ArgumentError < Error; end
 
   # v0 API uri
-  ::BASE_URI = 'https://hacker-news.firebaseio.com/v0'
+  ::BASE_URI = "https://hacker-news.firebaseio.com/v0"
 
   # v0 available resources
   ::RESOURCES = {
@@ -26,28 +26,30 @@ module HackerNews
     job_stories: "jobstories"
   }.freeze
 
-  #  Makes get request after validating params
+  # Makes get request after validating params
+  # Returns HTTParty::Response
+  # Service consumer responsible for handling responses
   def self.get(resource:, **options)
     uri = _validate_and_set_uri(resource, options)
-    res = HTTParty.get(uri)
-    case res.code
-    when 200
-      res.parsed_response
-    when 500...600
-      puts "Error in request: #{res.code}"
-    end
+    res = HTTParty.get uri
+
+    # Normalize response
+    {
+      code: res.code,
+      data: JSON.parse(res.body, { symbolize_names: true })
+    }
   end
 
-  # Validates params passed to .get
+  # Validates params passed to .get. Returns uri
   def self._validate_and_set_uri(resource, options)
-    uri = BASE_URI + "/#{RESOURCES[resource]}"
+    raise ArgumentError, "Requested resource '/#{resource}' invalid." unless RESOURCES.key? resource
+
+    uri = +"#{BASE_URI}/#{RESOURCES[resource]}"
     if %i[item user].include? resource
       raise ArgumentError, "'/#{resource}' requires an :id." unless options.key? :id
 
       uri << "/#{options[:id]}"
-    elsif !RESOURCES.key?(resource)
-      raise ArgumentError, "Requested resource '/#{resource}' invalid."
     end
-    uri << '.json'
+    uri << ".json"
   end
 end
