@@ -73,15 +73,10 @@ function hadolint {
     hadolint/hadolint hadolint --ignore DL3008 -t style "${@}" - < Dockerfile
 }
 
-function lint {
-  # TODO: Add js-lint
-  ruby-lint
-}
-
 function ruby-lint {
   # Run with -a to autocorrect
-  # shellcheck disable=SC2120
-  local autocorrect="${1:-}"
+  # shellcheck disable=SC2119
+  local autocorrect="${0:-}"
   local lint_command="rubocop"
 
   if [ "${autocorrect}" = "-a" ]; then
@@ -89,6 +84,11 @@ function ruby-lint {
   fi
 
   _dc js bash -c "${lint_command}"
+}
+
+function lint {
+  # TODO: Add js-lint
+  ruby-lint
 }
 
 function bundle:install {
