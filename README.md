@@ -20,15 +20,17 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
 
 * [X] Add services/HackerNews tests
 
-  Add `test/services/hacker_news_test.rb` to test service. In the future I'd
-  like to swap RSpec for Minitest.
+  Add `test/services/hacker_news_test.rb` to test service. In the future I'd like to swap RSpec for Minitest.
 
 * [X] Add ruby lint command to `run`
 
 * [ ] Plan main page
 
-  Should mimic news.ycombinator.com landing page. This will inform controller
-  design and model relationships.
+  Should mimic news.ycombinator.com landing page. This will inform controller design and model relationships.
+
+  It looks like the "Top" posts (i.e. the https://news.ycombinator.com/news) are a list of the top posts of the last 24 hours. If you click "More" at the bottom of the page, you navigate to the /news resource, but with a query param `p`. I assume this list is regenerated server-side on some time interval. Recreating this could involve using something like https://github.com/sidekiq-scheduler/sidekiq-scheduler to run automated jobs on an interval. I could also test the interval theory if I wanted to.
+
+  Btw, [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how) a write-up on the ranking algorithm, which will be needed.
 
 * [ ] Add models
 
