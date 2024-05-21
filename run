@@ -59,7 +59,7 @@ function psql {
   # Connect to PostgreSQL with psql
   # shellcheck disable=SC1091
   . .env
- _dc postgres psql -U "${POSTGRES_USER}" "${@}"
+  _dc postgres psql -U "${POSTGRES_USER}" "${@}"
 }
 
 function redis-cli {
