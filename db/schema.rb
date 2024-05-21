@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_21_175432) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_21_180228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,6 +35,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_21_175432) do
     t.integer "parts", default: [], array: true
     t.integer "descendants", default: [], array: true
     t.enum "context", enum_type: "context_type"
+    t.integer "hn_id"
   end
 
 end
