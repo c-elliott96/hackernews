@@ -1,6 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  hn_id: 1
   deleted: false
   context: job
   by: MyString
@@ -14,6 +15,7 @@ one:
   title: MyText
 
 two:
+  hn_id: 2
   deleted: false
   context: story
   by: MyString
