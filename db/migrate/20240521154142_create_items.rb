@@ -1,5 +1,7 @@
-class CreateItems < ActiveRecord::Migration[7.1]
-  def change
+# frozen_string_literal: true
+
+class CreateItems < ActiveRecord::Migration[7.1] # rubocop:disable Style/Documentation
+  def change # rubocop:disable Metrics/MethodLength
     create_enum :item_type, %w[job story comment poll pollopt]
     create_table :items do |t|
       t.boolean :deleted
