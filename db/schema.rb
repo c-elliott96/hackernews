@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_22_024455) do # rubocop:disable Metrics/BlockLength,Style/NumericLiterals
+ActiveRecord::Schema[7.1].define(version: 2024_05_22_052050) do # rubocop:disable Metrics/BlockLength,Style/NumericLiterals
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -21,6 +19,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_22_024455) do # rubocop:disabl
   create_enum "context_type", %w[job story comment poll pollopt]
 
   create_table "items", force: :cascade do |t|
+    t.integer "hn_id", null: false
     t.boolean "deleted"
     t.string "by"
     t.integer "time"
@@ -36,8 +35,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_22_024455) do # rubocop:disabl
     t.integer "kids", default: [], array: true
     t.integer "parts", default: [], array: true
     t.integer "descendants", default: [], array: true
-    t.enum "context", null: false, enum_type: "context_type"
-    t.integer "hn_id"
+    t.enum "context", enum_type: "context_type"
   end
 
   create_table "users", force: :cascade do |t|

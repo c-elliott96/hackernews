@@ -126,3 +126,33 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
   * Determine how to update DB with Hackernews API data. Do I need all history? If I want a perfect mirror, yeah
     * Test to see how much data that would occupy. It will only grow.
   * get started with the ORM setup
+
+## Database Implementation
+
+See [Rails schema](/db/schema.rb) for current schema
+
+### `Items` table
+
+* `Item.hn_id` is a _unique, not null integer_. Corresponds to HackerNews API Item.id field.
+* `Item.deleted` is a _boolean_. True if the item is deleted.
+* `Item.context` is an _enum_. It corresponds to the HackerNews API User.type -- I changed it to avoid potentially causing issues with rails.
+* `Item.by` is a _string_, most likely a `User.hn_id` (unique string).
+* `Item.time` is an _integer_, but it represents Unix Time. It might need special treatment depending on what I need to do with it.
+* `Item.text` is _text_ in DB, and represents HTML in HackerNews. "The comment, story, or poll text".
+* `Item.dead` is a _boolean_. True if the item is dead (I don't presently know what that means).
+* `Item.parent` is a has_one kind of relationship. Item only has one parent. Either another comment or the story. `Item.hn_id`.
+* `Item.poll` is an _integer_, which should be `Item.hn_id`. Pollopt's associated poll.
+* `Item.kids` is an _integer array_, that stores the `Item.hn_id`(s) of the items comments, in "ranked display order".
+* `Item.url` is _text_. Url of the story.
+* `Item.score` is an _integer_, reprenting the story's score... Meaning? It's also the votes for a `pollopt`.
+* `Item.title` is _text_. The title of a story, poll, or job. HTML.
+* `Item.parts` is an _integer array_, storing `Item.hn_id`(s) of pollopts in display order.
+* `Item.descendants` is __currently__ an _integer array_, but I am not sure this is appropriate. "In the case of stories or polls, the total comment count." So maybe it should instead just be an integer.
+
+### `Users` table
+
+* `User.hn_id` is a _unique, not null string_. Corresponds to HackerNews API User.id field. Case sensitive.
+* `User.created` is an _integer_, representing when the User was created in HN, in Unix Time. Same considerations for this field as Item.time.
+* `User.karma` is an _integer_. "The user's karma."
+* `User.about` is _text_. "The user's optional self-description. HTML."
+* `User.submitted` is an _integer array_. "List of the user's stories, polls and comments." It should be a list of `Item.hn_id`(s).
