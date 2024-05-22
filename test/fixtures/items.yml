@@ -2,7 +2,7 @@
 
 one:
   deleted: false
-  type: 
+  context: job
   by: MyString
   time: 1
   text: MyText
@@ -15,7 +15,7 @@ one:
 
 two:
   deleted: false
-  type: 
+  context: story
   by: MyString
   time: 1
   text: MyText
