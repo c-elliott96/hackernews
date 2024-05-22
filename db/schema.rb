@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 20_240_522_021_917) do # rubocop:disable Metrics/BlockLength
+ActiveRecord::Schema[7.1].define(version: 2024_05_22_024455) do # rubocop:disable Metrics/BlockLength,Style/NumericLiterals
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -36,14 +36,14 @@ ActiveRecord::Schema[7.1].define(version: 20_240_522_021_917) do # rubocop:disab
     t.integer "kids", default: [], array: true
     t.integer "parts", default: [], array: true
     t.integer "descendants", default: [], array: true
-    t.enum "context", enum_type: "context_type"
+    t.enum "context", null: false, enum_type: "context_type"
     t.integer "hn_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "hn_id"
-    t.integer "created"
-    t.integer "karma"
+    t.string "hn_id", null: false
+    t.integer "created", null: false
+    t.integer "karma", null: false
     t.text "about"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
