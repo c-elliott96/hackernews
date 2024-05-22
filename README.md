@@ -30,11 +30,15 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
 
 * [ ] Determine how much data, approximately, the HN site stores
 
-  * [ ] Check on how to access Postgresql database
+  * [X] Check on how to access Postgresql database
 
-  * [ ] Determine how to create tables in Rails
+    Run `./run psql` and then e.g. `\c hackernews_development` to access the dev DB. `\d` to see the tables. `select * from items` for all rows from e.g. `items`.
 
-  * [ ] Create `Items` table that has the following fields:
+  * [X] Determine how to create tables in Rails
+
+    `./run rails g model ExampleModel` for creating a model and `./run rails g migration` to create a migration
+
+  * [X] Create `Items` table that has the following fields:
 
     ```bash
       rails g model
@@ -91,7 +95,9 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
 
   15. `descendants`. In the case of stories or polls, the total comment count.
 
-  * [ ] Create `Users` table that stores the following fields:
+  TODO: List what fields we made and their types
+
+  * [X] Create `Users` table that stores the following fields:
 
   1. **`id`**. The user's unique username. Case-sensitive. Required.
 
@@ -102,6 +108,8 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
   4. `about`. The user's optional self-description. HTML.
 
   5. `submitted`. List of the user's stories, polls, and comments.
+
+  TODO: Same as above
 
 * [ ] Plan main page
 
@@ -118,5 +126,3 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
   * Determine how to update DB with Hackernews API data. Do I need all history? If I want a perfect mirror, yeah
     * Test to see how much data that would occupy. It will only grow.
   * get started with the ORM setup
-* [ ] Verify Postgres setup and understand how to easily connect to the DB in dev
-* [ ] Document the data structure to use for DB and ORMs
