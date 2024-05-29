@@ -5,7 +5,11 @@ require "httparty"
 # Handles HackerNews API (v0) requests, with custom Errors
 #
 # Usage: HackerNews.get(resource: {RESOURCES_SYM}, [id: ID])
-# Returns JSON response as a hash
+# Returns JSON response as a hash of the form
+# {
+#   code: RESPONSE CODE,
+#   data: HASH OF DATA
+# }
 module HackerNews
   class Error < StandardError; end
   class ArgumentError < Error; end
