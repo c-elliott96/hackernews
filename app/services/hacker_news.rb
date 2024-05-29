@@ -37,6 +37,9 @@ module HackerNews
     uri = _validate_and_set_uri(resource, options)
     res = HTTParty.get uri
 
+    # TODO: Fix this so e.g. resource: :item, id: ID > MAXITEM does NOT return a 200
+    # because this item does not actually exist
+    # A bad request looks to get a 301 code. HTTParty must be following by default
     # Normalize response
     {
       code: res.code,
