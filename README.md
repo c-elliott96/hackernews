@@ -12,6 +12,8 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
 
 * [ ] Fix `./run ruby-lint -a` to work properly.
 
+* [ ] Update tests and add to reflect changes to `HackerNews.get`
+
 * [ ] Handle future API changes properly
 
   > For versioning purposes, only removal of a non-optional field or alteration of an existing field will be considered incompatible changes. Clients should gracefully handle additional fields they don't expect, and simply ignore them.
