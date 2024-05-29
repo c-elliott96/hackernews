@@ -30,16 +30,20 @@ module HackerNews
     job_stories: "jobstories"
   }.freeze
 
-  # Makes get request after validating params
-  # Returns HTTParty::Response
-  # Service consumer responsible for handling responses
+  # Makes GET request after validating params. Returns a hash containing the
+  # response :code with hash called :data that contains JSON of the response body
   def self.get(resource:, **options)
     uri = _validate_and_set_uri(resource, options)
     res = HTTParty.get uri
 
-    # TODO: Fix this so e.g. resource: :item, id: ID > MAXITEM does NOT return a 200
-    # because this item does not actually exist
-    # A bad request looks to get a 301 code. HTTParty must be following by default
+    # NOTE: requesting an item with an id that doesn't exist, i.e. item.id >
+    # maxitem, still returns a 200 response code.
+    # So, until I think of a better way to handle this scenario, I just warn if
+    # the body of the response is nil.
+    Rails.logger.tagged("HackerNews.get") do
+      Rails.logger.warn "Requested resource #{resource} appears invalid." if res[:body].nil?
+    end
+
     # Normalize response
     {
       code: res.code,
@@ -57,6 +61,10 @@ module HackerNews
 
       uri << "/#{options[:id]}"
     end
+
+    # Setting 'Accept: application/json' header does not achieve the same
+    # response as requesting JSON explicitly. I haven't been able to figure out
+    # a better way to do this.
     uri << ".json"
   end
 end

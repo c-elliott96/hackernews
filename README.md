@@ -10,23 +10,11 @@ For details on the project's base Rails and Docker configurations, see the [`doc
 
 Project TODOs go here. They could link to GitHub issues, if I so desire.
 
+* [ ] Fix `./run ruby-lint -a` to work properly.
+
 * [ ] Handle future API changes properly
 
   > For versioning purposes, only removal of a non-optional field or alteration of an existing field will be considered incompatible changes. Clients should gracefully handle additional fields they don't expect, and simply ignore them.
-
-* [X] Bootstrap project
-
-  Start with the docker-rails-example
-
-* [X] Retrieve HackerNews data via the API
-
-  Create `app/services/hacker_news.rb` to handle API requests
-
-* [X] Add services/HackerNews tests
-
-  Add `test/services/hacker_news_test.rb` to test service. In the future I'd like to swap RSpec for Minitest.
-
-* [X] Add ruby lint command to `run`
 
 * [ ] Determine how much data, approximately, the HN site stores
 
@@ -41,8 +29,6 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
   * [X] Create `Items` table
 
   * [X] Create `Users` table
-
-  * [ ] Map HN API data to my tables.
 
   * [ ] Create worker task (or the like) to populate this DB with actual HN data.
 
@@ -67,6 +53,22 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
   * Determine how to update DB with Hackernews API data. Do I need all history? If I want a perfect mirror, yeah
     * Test to see how much data that would occupy. It will only grow.
   * get started with the ORM setup
+
+### Completed
+
+* [X] Bootstrap project
+
+  Start with the docker-rails-example
+
+* [X] Retrieve HackerNews data via the API
+
+  Create `app/services/hacker_news.rb` to handle API requests
+
+* [X] Add services/HackerNews tests
+
+  Add `test/services/hacker_news_test.rb` to test service. In the future I'd like to swap RSpec for Minitest.
+
+* [X] Add ruby lint command to `run`
 
 ## Database Implementation
 
@@ -97,3 +99,27 @@ See [Rails schema](/db/schema.rb) for current schema
 * `User.karma` is an _integer_. "The user's karma."
 * `User.about` is _text_. "The user's optional self-description. HTML."
 * `User.submitted` is an _integer array_. "List of the user's stories, polls and comments." It should be a list of `Item.hn_id`(s).
+
+## Development Changes
+
+Note: This subsection should be replaced by the CHANGELOG when I release an
+initial version.
+
+* [2024-05-29] 
+
+  I added a log WARN message to HackerNews.get if we attempt to access a
+  resource that returns `nil` for the response body. This shouldn't happen, but
+  it seems like I can't rely on the response code because even bad item IDs
+  result in a `res.code` of 200.
+
+  I also started work on adding a temporary utility script that I'll use to
+  populate the DB with a small subset of items, to try to get a feel for how
+  much data the whole HN dump will consume.
+  [This](https://news.ycombinator.com/item?id=38861301) post seems to indicate
+  that the dataset should be ~5-6GB.
+
+---
+
+I am using [GFM](https://github.github.com/gfm/) as the markdown specification
+for this document. I do also format dates in here similarly to inactive
+timestamps in Emacs' org-mode.
