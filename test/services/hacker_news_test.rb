@@ -15,6 +15,7 @@ class HackerNewsTest < Minitest::Test
     res.expect :body, "12345"
     res.expect :get, 123_45
     res.expect :[], :a_res_body, [:body] # Mock #[] on res, make it respond with something truthy, expect res[:body] use
+    res.expect :body, "12345" # We have to mock this again because the method is getting called again? Smells bad.
     HTTParty.stub :get, res do
       assert_equal HackerNews.get(resource: :maxitem), { code: 200, data: 123_45 }
     end
@@ -26,6 +27,7 @@ class HackerNewsTest < Minitest::Test
     res.expect :body, "{\"key\":\"value\"}"
     res.expect :get, { "key" => "value " }
     res.expect :[], :a_res_body, [:body]
+    res.expect :body, "{\"key\":\"value\"}"
     HTTParty.stub :get, res do
       assert_equal HackerNews.get(resource: :item, id: 1), { code: 200, data: { key: "value" } }
     end
