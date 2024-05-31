@@ -37,7 +37,7 @@ class HackerNewsTest < Minitest::Test
     end
   end
 
-  def test_get_invalid_options
+  def test_get_valid_resource_invalid_options
     assert_raises(HackerNews::ArgumentError, "'/item' requires an :id.") { HackerNews.get(resource: :item) }
   end
 end
