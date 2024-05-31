@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -12,16 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_22_052050) do # rubocop:disable Metrics/BlockLength,Style/NumericLiterals
+ActiveRecord::Schema[7.1].define(version: 2024_05_31_043345) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   # Custom types defined in this database.
   # Note that some types may not work with other database engines. Be careful if changing database.
-  create_enum "context_type", %w[job story comment poll pollopt]
+  create_enum "context_type", ["job", "story", "comment", "poll", "pollopt"]
 
   create_table "items", force: :cascade do |t|
-    t.integer "hn_id", null: false
     t.boolean "deleted"
     t.string "by"
     t.integer "time"
@@ -36,8 +33,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_22_052050) do # rubocop:disabl
     t.datetime "updated_at", null: false
     t.integer "kids", default: [], array: true
     t.integer "parts", default: [], array: true
-    t.integer "descendants", default: [], array: true
     t.enum "context", enum_type: "context_type"
+    t.integer "hn_id", null: false
+    t.integer "descendants"
   end
 
   create_table "users", force: :cascade do |t|
@@ -49,4 +47,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_22_052050) do # rubocop:disabl
     t.datetime "updated_at", null: false
     t.integer "submitted", default: [], array: true
   end
+
 end

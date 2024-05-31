@@ -10,12 +10,11 @@ class HackerNewsTest < Minitest::Test
   end
 
   def test_get_basic_resource_valid_params
-    # Mock HTTParty::Response values used in HackerNews.get
-    # There's probably a better way to do this...
     res = Minitest::Mock.new
     res.expect :code, 200
     res.expect :body, "12345"
     res.expect :get, 123_45
+    res.expect :[], :a_res_body, [:body] # Mock #[] on res, make it respond with something truthy, expect res[:body] use
     HTTParty.stub :get, res do
       assert_equal HackerNews.get(resource: :maxitem), { code: 200, data: 123_45 }
     end
@@ -26,6 +25,7 @@ class HackerNewsTest < Minitest::Test
     res.expect :code, 200
     res.expect :body, "{\"key\":\"value\"}"
     res.expect :get, { "key" => "value " }
+    res.expect :[], :a_res_body, [:body]
     HTTParty.stub :get, res do
       assert_equal HackerNews.get(resource: :item, id: 1), { code: 200, data: { key: "value" } }
     end
@@ -39,5 +39,9 @@ class HackerNewsTest < Minitest::Test
 
   def test_get_valid_resource_invalid_options
     assert_raises(HackerNews::ArgumentError, "'/item' requires an :id.") { HackerNews.get(resource: :item) }
+  end
+
+  def test_logger_warns_on_invalid_id
+    # TODO: validate logger logic in HackerNews#get
   end
 end

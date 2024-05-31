@@ -5,11 +5,13 @@ require "httparty"
 # Handles HackerNews API (v0) requests, with custom Errors
 #
 # Usage: HackerNews.get(resource: {RESOURCES_SYM}, [id: ID])
+#
 # Returns JSON response as a hash of the form
 # {
 #   code: RESPONSE CODE,
 #   data: HASH OF DATA
 # }
+#
 module HackerNews
   class Error < StandardError; end
   class ArgumentError < Error; end
@@ -31,17 +33,18 @@ module HackerNews
   }.freeze
 
   # Makes GET request after validating params. Returns a hash containing the
-  # response :code with hash called :data that contains JSON of the response body
+  # response :code with hash called :data that contains JSON of the response
+  # body
   def self.get(resource:, **options)
     uri = _validate_and_set_uri(resource, options)
     res = HTTParty.get uri
 
     # NOTE: requesting an item with an id that doesn't exist, i.e. item.id >
-    # maxitem, still returns a 200 response code.
-    # So, until I think of a better way to handle this scenario, I just warn if
-    # the body of the response is nil.
-    Rails.logger.tagged("HackerNews.get") do
-      Rails.logger.warn "Requested resource #{resource} appears invalid." if res[:body].nil?
+    # maxitem, still returns a 200 response code. So, until I think of a better
+    # way to handle this scenario, I just warn if the body of the response is
+    # nil.
+    Rails.logger.tagged("HackerNews#get(:#{resource})") do
+      Rails.logger.warn "Requested resource #{resource} appears invalid." if res.body.nil?
     end
 
     # Normalize response
