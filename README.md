@@ -5,10 +5,16 @@
 Leverages the [HackerNews API](https://github.com/HackerNews/API), and is bootstrapped via the [docker-rails-example](https://github.com/nickjj/docker-rails-example/tree/main) project by [Nick Janetakis](https://nickjanetakis.com/). Please check out their awesome work.
 
 For details on the project's base Rails and Docker configurations, see the [`docker-rails-example/README`](https://github.com/nickjj/docker-rails-example/blob/c2e3a4bec4bf355b1c6882f34dd74eb438035a50/README.md).
-
 ## TODOs
 
 Project TODOs go here. They could link to GitHub issues, if I so desire.
+
+### TODO Create News controller
+
+Renders some group of 30 posts from `/topstories`. Accepts query param `p` to know what group to display.
+
+Done: Added controller and some setup code. TODO: Actually display some data. TODO: Add tests
+
 
 * [ ] Fix `./run ruby-lint -a` to work properly.
 
@@ -36,25 +42,24 @@ Project TODOs go here. They could link to GitHub issues, if I so desire.
 
   * [ ] Decide how much HN data we can hold on to.
 
-* [ ] Populate DB with HN data, rather than requesting everything all the time. Is this a terrible decision?
+* [ ] Populate DB: Rake tasks
 
-  If we decide _not_ to have the data 'locally', we'll have to make requests for any piece that's not cached. Is caching a bad idea? How do? Oh man, if I didn't need the database after all...
+  Plan: rake tasks to keep DB mirror of HN in sync as often as feasible
+  
+  Max history configuration? I.e., do we create a way for us to only mirror a portion of the DB, as opposed to the whole thing? This would be ideal for development and deployment testing.
+  
+  1. Check if DB is out of sync. What tables are we mirroring?
+  2. Sync DB. Spawn worker thread to update DB. Make sure we aren't locking the DB during this whole thread, only on writes to the database.
+  
+  What if instead of attempting to mirror the whole DB, I just start adding "encountered" items to the DB passively? Then, as a user navigates, we first check if the item exists in our local db. If not, we request it and add it to the DB.
 
 * [ ] Plan main page
 
   Should mimic news.ycombinator.com landing page. This will inform controller design and model relationships.
 
-  It looks like the "Top" posts (i.e. the https://news.ycombinator.com/news) are a list of the top posts of the last 24 hours. If you click "More" at the bottom of the page, you navigate to the /news resource, but with a query param `p`. I am not sure if this list is generated on every request or if it is generated on an interval. If I implemented the code to do it on a time interval, I could use something like [sidekiq-scheduler](https://github.com/sidekiq-scheduler). However, I have a lot of questions regarding this solution, and it might be easier to start with just the code to generate the list, and come back to the issue of efficiency later.
-
   Btw, [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how) a write-up on the ranking algorithm, which will be needed.
-
-  * A **post** is just an _item_ in HN API.
-
-  After looking at all of this, I've realized that perhaps the most sensible way to do this would be to store the data we want in a local DB, then query that for e.g. the top posts list. This way, I can re-query the DB on every request, and just have the database re-populated with new HN data on some customizable interval. So, that being said, I need to
-  * verify postgres works and I know how to use it,
-  * Determine how to update DB with Hackernews API data. Do I need all history? If I want a perfect mirror, yeah
-    * Test to see how much data that would occupy. It will only grow.
-  * get started with the ORM setup
+  
+  What _is_ the HN main page API endpoint, or sorting method? It's not immediately clear. Let's make up something and move on. Since the HN API talks about `/topstories` first, that's what I'm going to do.
 
 ### Completed
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Pages in the Application
+# Home page. Might remove later
 class PagesController < ApplicationController
   def home; end
 end
