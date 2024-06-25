@@ -5,18 +5,18 @@
 Leverages the [HackerNews API](https://github.com/HackerNews/API), and is bootstrapped via the [docker-rails-example](https://github.com/nickjj/docker-rails-example/tree/main) project by [Nick Janetakis](https://nickjanetakis.com/). Please check out their awesome work.
 
 For details on the project's base Rails and Docker configurations, see the [`docker-rails-example/README`](https://github.com/nickjj/docker-rails-example/blob/c2e3a4bec4bf355b1c6882f34dd74eb438035a50/README.md).
+
 ## TODOs
 
-Project TODOs go here. They could link to GitHub issues, if I so desire.
+My list of WIP TODOs. Peridically sort these by priority!
 
-### TODO Create News controller
+* [ ] In-Progress: `/news` (root)
 
-Renders some group of 30 posts from `/topstories`. Accepts query param `p` to know what group to display.
-
-Done: Added controller and some setup code. TODO: Actually display some data. TODO: Add tests
-
+  Renders some group of 30 posts from `/topstories`. Accepts query param `p` to know what group to display.
 
 * [ ] Fix `./run ruby-lint -a` to work properly.
+
+* [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date. Or figure out how to cleanly rebase from `docker-rails-example`.
 
 * [ ] Update tests and add to reflect changes to `HackerNews.get`
 
@@ -24,11 +24,37 @@ Done: Added controller and some setup code. TODO: Actually display some data. TO
 
   > For versioning purposes, only removal of a non-optional field or alteration of an existing field will be considered incompatible changes. Clients should gracefully handle additional fields they don't expect, and simply ignore them.
 
+### Completed/Archived
+
+* [x] Plan main page
+
+  Should mimic news.ycombinator.com landing page. This will inform controller design and model relationships.
+
+  Btw, [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how) a write-up on the ranking algorithm, which will be needed.
+  
+  What _is_ the HN main page API endpoint, or sorting method? It's not immediately clear. Let's make up something and move on. Since the HN API talks about `/topstories` first, that's what I'm going to do.
+
+* [X] Bootstrap project
+
+  Start with the docker-rails-example
+
+* [X] Retrieve HackerNews data via the API
+
+  Create `app/services/hacker_news.rb` to handle API requests
+
+* [X] Add services/HackerNews tests
+
+  Add `test/services/hacker_news_test.rb` to test service. In the future I'd like to swap RSpec for Minitest.
+
+* [X] Add ruby lint command to `run`
+
 * [ ] Determine how much data, approximately, the HN site stores
 
   * [X] Check on how to access Postgresql database
 
     Run `./run psql` and then e.g. `\c hackernews_development` to access the dev DB. `\d` to see the tables. `select * from items` for all rows from e.g. `items`.
+    
+    To delete all content from a table via psql interface: `TRUNCATE tablename RESTART IDENTITY CASCADE;`. This command is the preferred way to delete rows, and restarts auto-incrementing counters. The cascade directive says to remove references to the deleted items.
 
   * [X] Determine how to create tables in Rails
 
@@ -52,30 +78,6 @@ Done: Added controller and some setup code. TODO: Actually display some data. TO
   2. Sync DB. Spawn worker thread to update DB. Make sure we aren't locking the DB during this whole thread, only on writes to the database.
   
   What if instead of attempting to mirror the whole DB, I just start adding "encountered" items to the DB passively? Then, as a user navigates, we first check if the item exists in our local db. If not, we request it and add it to the DB.
-
-* [ ] Plan main page
-
-  Should mimic news.ycombinator.com landing page. This will inform controller design and model relationships.
-
-  Btw, [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how) a write-up on the ranking algorithm, which will be needed.
-  
-  What _is_ the HN main page API endpoint, or sorting method? It's not immediately clear. Let's make up something and move on. Since the HN API talks about `/topstories` first, that's what I'm going to do.
-
-### Completed
-
-* [X] Bootstrap project
-
-  Start with the docker-rails-example
-
-* [X] Retrieve HackerNews data via the API
-
-  Create `app/services/hacker_news.rb` to handle API requests
-
-* [X] Add services/HackerNews tests
-
-  Add `test/services/hacker_news_test.rb` to test service. In the future I'd like to swap RSpec for Minitest.
-
-* [X] Add ruby lint command to `run`
 
 ## Database Implementation
 
@@ -124,6 +126,49 @@ initial version.
   much data the whole HN dump will consume.
   [This](https://news.ycombinator.com/item?id=38861301) post seems to indicate
   that the dataset should be ~5-6GB.
+  
+* [2024-06-23 Sun] -- [2024-06-25 Tue] 
+
+  I've decided not to worry about the database stuff yet. I've spent too much
+  time trying to figure out how best to do that, and too little developing. For
+  now, let's just make a fresh request for every new resource we need. Later we
+  can adding caching/DB support to improve things. I'll leave the DB setup as
+  is, unused.
+  
+  Adding code like the following improved response times considerably:
+  
+  ```ruby
+  def index
+    all_top_stories = HackerNews.get(resource: :top_stories)[:data]
+    # array of ids for the top stories of a given range
+    top_stories_page_p = all_top_stories.slice(@page_range)
+    @stories = []
+    threads = []
+    top_stories_page_p.each_with_index do |id, index|
+      threads << Thread.new do
+        story_data = HackerNews.get(resource: :item, id:)[:data]
+        @stories[index] = [story_data[:title], story_data[:url]]
+      end
+    end
+    threads.each(&:join)
+  end
+  ```
+  
+  Where we went from getting story details for 30 items in about 5-7 seconds to
+  doing so in about 0.5 - 2 seconds. Adding threads for these requests was a
+  good choice, it seems. I did attempt to take things a step further in that I
+  wrote some code to first check if the requested item exists in the local
+  database (and just return that), and otherwise we can make the request and
+  then SAVE the item to the DB (whereby passively populating our own database).
+  However, doing so in the same async manner caused my code to create a large
+  number of DB actions at once (since initially there are no items in the DB),
+  overwhelming the thread pool for the database. A solution to this immediate
+  issue is to increase the pool configuration number. However, I'm not sure if
+  that's sufficient. With many concurrent users, this could crash things. I will
+  either need to create some kind of protection layer around this, or abandon
+  this idea for now. The latter is what I'm going with for the time being, as I
+  would like to come back to DB/cache optimization after I get a v0 application
+  completed.
 
 ---
 

@@ -1,1 +1,7 @@
-<%= @top_stories_page_p %>
+<% @stories.each do |story| %>
+    <h1>
+        <a href=<%=story[1]%>>
+            <%=story[0]%>
+        </a>
+    </h1>
+<% end %>

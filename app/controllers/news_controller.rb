@@ -4,27 +4,35 @@
 class NewsController < ApplicationController
   before_action :prepare_page_range
 
-  def index
-    # @page_range is the range of the /topstories we want to display
-    top_stories_data = HackerNews.get(resource: :top_stories)[:data] # this could be an empty hash
-    p "selecting #{@page_range} from top_stories ..."
-    @top_stories_page_p = top_stories_data.slice(@page_range)
+  def index # rubocop:disable Metrics/MethodLength
+    all_top_stories = HackerNews.get(resource: :top_stories)[:data]
+    # array of ids for the top stories of a given range
+    top_stories_page_p = all_top_stories.slice(@page_range)
+    @stories = []
+    threads = []
+    top_stories_page_p.each_with_index do |id, index|
+      threads << Thread.new do
+        story_data = HackerNews.get(resource: :item, id:)[:data]
+        @stories[index] = [story_data[:title], story_data[:url]]
+      end
+    end
+    threads.each(&:join)
   end
 
   private
 
-  def prepare_page_range
-    # what's a more concise way to do this?
-    p =
+  def prepare_page_range # rubocop:disable Metrics/AbcSize
+    # Validates and converts ?p param; sets @page_range, which is the range of items to return
+    # from HN /topstories
+
+    page =
       # handles the cases where p is not present or it's > 500/30
-      if params[:p].nil?
-        0
-      elsif params[:p].empty? || p.to_i > 16
-        0
+      if params[:p].nil? || params[:p].empty? || params[:p].to_i > 16 || params[:p].to_i < 1
+        1
       else
         params[:p].to_i
       end
 
-    @page_range = p * 30..((p + 1) * 30) - 1
+    @page_range = (page - 1) * 30..(page * 30) - 1
   end
 end

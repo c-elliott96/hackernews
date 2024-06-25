@@ -35,7 +35,7 @@ module HackerNews
   # Makes GET request after validating params. Returns a hash containing the
   # response :code with hash called :data that contains JSON of the response
   # body
-  def self.get(resource:, **options)
+  def self.get(resource:, **options) # rubocop:disable Metrics/MethodLength
     uri = _validate_and_set_uri(resource, options)
     res = HTTParty.get uri
 
@@ -43,14 +43,21 @@ module HackerNews
     # maxitem, still returns a 200 response code. So, until I think of a better
     # way to handle this scenario, I just warn if the body of the response is
     # nil.
-    Rails.logger.tagged("HackerNews#get(:#{resource})") do
-      Rails.logger.warn "Requested resource #{resource} appears invalid." if res.body.nil?
+    #
+    # Using TaggedLogging here to provide some context, althought it's probably
+    # not necessary.
+    parsed_body = JSON.parse(res.body, { symbolize_names: true })
+
+    if parsed_body.nil?
+      Rails.logger.tagged("HackerNews#get(:#{resource})") do
+        Rails.logger.warn { "Requested resource :#{resource} appears invalid; response body empty." }
+      end
     end
 
     # Normalize response
     {
       code: res.code,
-      data: JSON.parse(res.body, { symbolize_names: true })
+      data: parsed_body
     }
   end
 

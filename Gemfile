@@ -47,7 +47,7 @@ gem "tzinfo-data", platforms: %i[mingw mswin x64_mingw jruby]
 # Execute jobs in the background [https://github.com/mperham/sidekiq]
 gem "sidekiq", "~> 7.2"
 
-# Requests
+# HTTP lib used to make HackerNews API requests
 gem "httparty", "~> 0.21"
 
 group :development, :test do

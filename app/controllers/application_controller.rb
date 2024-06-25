@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Primary Application controller
-# Shouldn't modify without good cause
+# Base application controller. All other controllers typically extend
+# ApplicationController.
 class ApplicationController < ActionController::Base
 end
