@@ -138,20 +138,15 @@ initial version.
   Adding code like the following improved response times considerably:
   
   ```ruby
-  def index
-    all_top_stories = HackerNews.get(resource: :top_stories)[:data]
-    # array of ids for the top stories of a given range
-    top_stories_page_p = all_top_stories.slice(@page_range)
-    @stories = []
-    threads = []
-    top_stories_page_p.each_with_index do |id, index|
-      threads << Thread.new do
-        story_data = HackerNews.get(resource: :item, id:)[:data]
-        @stories[index] = [story_data[:title], story_data[:url]]
-      end
+  items = []
+  threads = []
+  ids.each_with_index do |id, i|
+    threads << Thread.new do
+      item = HackerNews.get(resource: :item, id:)
+      items[i] = item
     end
-    threads.each(&:join)
   end
+  threads.each(&:join)
   ```
   
   Where we went from getting story details for 30 items in about 5-7 seconds to
