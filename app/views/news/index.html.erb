@@ -8,3 +8,5 @@
         </li>
     </ol>
 <% end %>
+
+<%= button_to "More", { action: "index" }, { method: :get, params: { p: @page + 1 } } %>
