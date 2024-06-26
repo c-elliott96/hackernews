@@ -170,6 +170,18 @@ initial version.
   would like to come back to DB/cache optimization after I get a v0 application
   completed.
 
+* [2024-06-26 Wed] 
+
+  I added the story rank functionality. Now, stories in `/news` display the
+  story's rank from HackerNews' `/topstories` resource.
+  
+  I also added the `More` button to load the next set of stories. This works by
+  incrementing the `p` query param and making a `get` request to `/news`. A
+  caveat: the resource we rely on only returns the top 500 stories. Page 16 of
+  this list (in ranges of 30) ends at 480, so loading page 17 would attempt to
+  load 481 - 510. I should add logic to the controller to truncate the results
+  if we're at the end.
+
 ---
 
 I am using [GFM](https://github.github.com/gfm/) as the markdown specification
