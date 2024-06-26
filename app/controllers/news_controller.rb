@@ -2,37 +2,41 @@
 
 # Gets /topstories
 class NewsController < ApplicationController
-  before_action :prepare_page_range
+  before_action :page_range
 
-  def index # rubocop:disable Metrics/MethodLength
-    all_top_stories = HackerNews.get(resource: :top_stories)[:data]
-    # array of ids for the top stories of a given range
-    top_stories_page_p = all_top_stories.slice(@page_range)
-    @stories = []
-    threads = []
-    top_stories_page_p.each_with_index do |id, index|
-      threads << Thread.new do
-        story_data = HackerNews.get(resource: :item, id:)[:data]
-        @stories[index] = [story_data[:title], story_data[:url]]
-      end
+  # /topstories, /newstores, /beststories give us 500 stories. We display 30
+  # stories per page.
+  ITEMS_PER_PAGE = 30
+  TOTAL_PAGES = 16
+
+  def index
+    ids = HackerNews.get(resource: :top_stories)[:data].slice(page_range)
+    @stories = get_items_from_ids(ids)
+
+    # Set the rank of each story, which is just its index in the original array,
+    # but we throw that away so we can recompute the index here.
+    @stories.each_with_index do |story, i|
+      story.rank = (@page - 1) * ITEMS_PER_PAGE + i + 1
     end
-    threads.each(&:join)
   end
 
   private
 
-  def prepare_page_range # rubocop:disable Metrics/AbcSize
-    # Validates and converts ?p param; sets @page_range, which is the range of items to return
-    # from HN /topstories
+  def invalid_param_p?(param_p)
+    param_p.nil? || param_p.empty? || (param_p.to_i > TOTAL_PAGES || param_p.to_i < 1)
+  end
 
-    page =
-      # handles the cases where p is not present or it's > 500/30
-      if params[:p].nil? || params[:p].empty? || params[:p].to_i > 16 || params[:p].to_i < 1
+  def page_range
+    # Validates and converts ?p param; Returns a range, which is the range of
+    # items to get from HN /topstories
+
+    @page =
+      if invalid_param_p? params[:p]
         1
       else
         params[:p].to_i
       end
 
-    @page_range = (page - 1) * 30..(page * 30) - 1
+    (@page - 1) * 30..(@page * 30) - 1
   end
 end

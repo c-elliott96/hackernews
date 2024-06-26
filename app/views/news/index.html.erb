@@ -1,7 +1,10 @@
 <% @stories.each do |story| %>
-    <h1>
-        <a href=<%=story[1]%>>
-            <%=story[0]%>
-        </a>
-    </h1>
+    <ol class="list-decimal">
+        <li value=<%= story.rank %>>
+            <% # This assumes all items have a title and URL. Not sure if that's always the case. %>
+            <a href=<%=story.url%> target="_blank">
+                <%=story.title%>
+            </a>
+        </li>
+    </ol>
 <% end %>
