@@ -50,6 +50,9 @@ gem "sidekiq", "~> 7.2"
 # HTTP lib used to make HackerNews API requests
 gem "httparty", "~> 0.21"
 
+# To get the domain from a URL
+gem "public_suffix", "~> 6.0"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri mingw x64_mingw]

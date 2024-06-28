@@ -2,9 +2,10 @@
     <ol class="list-decimal">
         <li value=<%= story.rank %>>
             <% # This assumes all items have a title and URL. Not sure if that's always the case. %>
-            <a href=<%=story.url%> target="_blank">
-                <%=story.title%>
+            <a href=<%= story.url %> target="_blank">
+                <%= story.title %> <%= story.link_domain_name %>
             </a>
+            <p><%= "#{story.score_string} #{time_ago_in_words(story.time)} ago | TODO: 'hide' | TODO: 'discuss'/'N comments'" %></p>
         </li>
     </ol>
 <% end %>

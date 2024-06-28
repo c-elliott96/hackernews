@@ -2,7 +2,6 @@
 
 # Item, defined by HN API.
 class Item < ApplicationRecord
-  # Allows us to set a rank for Items (e.g. when we are assembling a list of
-  # items like from /topstories). It becomes the <li> index.
-  attr_accessor :rank
+  # TODO: Explain these briefly
+  attr_accessor :rank, :link_domain_name, :score_string
 end
