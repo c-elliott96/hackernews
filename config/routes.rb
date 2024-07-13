@@ -5,6 +5,8 @@ Rails.application.routes.draw do
 
   get "/news/", to: "news#index", as: :news
 
+  get "/home/", to: "pages#home", as: :home
+
   get "/up/", to: "up#index", as: :up
   get "/up/databases", to: "up#databases", as: :up_databases
 

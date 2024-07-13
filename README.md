@@ -176,6 +176,35 @@ initial version.
   this list (in ranges of 30) ends at 480, so loading page 17 would attempt to
   load 481 - 510. I should add logic to the controller to truncate the results
   if we're at the end.
+  
+* [2024-06-28 Fri] 
+
+  I added the ability to view the secondary and top-level domain in parenthesis,
+  like is done on HackerNews. However, it is currently just informational. On
+  the actual website, it appears that this text is a hyperlink to a resource
+  called `/from?site=...`, where the user is then directed to a list of all
+  posts that reference that particular domain. I will need to figure out if
+  doing this is possible and easy-enough.
+  
+  I also added the first piece of the secondary row of information about a
+  particular story: the points, user, and story age description (e.g. `66 points
+  by todsacerdoti 4 months ago`).
+  
+  I still need to implement the `hide` link, which apparently makes a request to
+  `/hide` which I _think_ is an alias for `/snip-story`?
+  
+  ```
+  Request URL:
+    https://news.ycombinator.com/snip-story?id=40817430&auth=106a51f53142f01a93cadd9014febd833fb21d51&onop=news
+  Request Method:
+    GET
+  Status Code:
+    200 OK
+  ```
+  
+* [2024-07-13 Sat]
+
+Work on `/news` view. Mostly styling work. Lots of tailwind trial and error.
 
 ---
 

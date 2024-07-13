@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Docker + Rails</title>
+    <title>Hacker News</title>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -23,30 +23,104 @@
     <meta name="theme-color" content="#ffffff">
   </head>
 
-  <body class="flex flex-col h-screen justify-between">
-    <div class="bg-gray-700">
-      <div class="max-w-screen-lg mx-auto py-3 px-3 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between flex-wrap">
-          <div class="flex-1 flex items-center">
-            <span class="flex p-2 rounded-lg bg-gray-900">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            </span>
-            <p class="ml-3 font-medium text-white truncate">
-              Rails <%= Rails::VERSION::STRING %> and Ruby <%= ENV["RUBY_VERSION"] %>
-            </p>
-          </div>
-          <div class="mt-2 order-3 w-full sm:mt-0 sm:w-auto">
-            <div class="rounded-md shadow-sm">
-              <span class="flex items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-500">
-                RAILS_ENV = <%= Rails.env %>
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <% # The main body, containing the nav bar and stories %>
 
-    <main class="max-w-screen-lg mx-auto mb-auto">
+  <body class="flex flex-col font-sans text-[10pt] h-screen">
+
+    <!-- <div class="bg-gray-700">
+         <div class="max-w-screen-lg mx-auto py-3 px-3 sm:px-6 lg:px-8">
+         <div class="flex items-center justify-between flex-wrap">
+         <div class="flex-1 flex items-center">
+         <span class="flex p-2 rounded-lg bg-gray-900">
+         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+         </span>
+         <p class="ml-3 font-medium text-white truncate">
+         Rails <%= Rails::VERSION::STRING %> and Ruby <%= ENV["RUBY_VERSION"] %>
+         </p>
+         </div>
+         <div class="mt-2 order-3 w-full sm:mt-0 sm:w-auto">
+         <div class="rounded-md shadow-sm">
+         <span class="flex items-center justify-center px-4 py-2 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-gray-500">
+         RAILS_ENV = <%= Rails.env %>
+         </span>
+         </div>
+         </div>
+         </div>
+         </div>
+         </div> -->
+
+    <% # Set the styles for the 'main content': the nav bar and the posts for that page. %>
+    <% # Set the margin in the left and right directions to auto %>
+    <% # Set the background color to be the light-gray %>
+    <main class="flex flex-col w-4/5 m-auto mt-2 bg-hackernews-light-gray">
+      <% # Hacker News nav menu %>
+      <% # [Y] *Hacker News* new | past | comments | ask | show | jobs | submit     ...       login %>
+
+      <% # Logo %>
+      <% # Set the width to full
+         # Set the padding to 2 pixels
+         # Justify content to the start
+         # Don't flex
+         # Set the background to the hackernews orange color %>
+      <div class="w-full h-6 flex flex-row items-center justify-start bg-hackernews-orange">
+
+        <% # Create the Y logo border, set size and border %>
+        <div class="size-[20px] m-[2px] flex items-center justify-center border-solid border-[1px] border-white">
+          <a href="<%= root_path %>">
+            <%= image_tag "y18.svg" %>
+          </a>
+        </div>
+
+        <% # text %>
+        <div class="w-full flex flex-row mx-1 relative space-x-1">
+
+          <% # Hacker News title %>
+          <div class="font-bold">
+            <a href="<%= news_path %>">Hacker News</a>
+          </div>
+
+          <% # new link %>
+          <a href="<%= root_path %>">new</a>
+
+          <div>|</div>
+
+          <% # past link %>
+          <a href="<%= root_path %>">past</a>
+
+          <div>|</div>
+
+          <% # comments link %>
+          <a href="<%= root_path %>">comments</a>
+
+          <div>|</div>
+
+          <% # ask link %>
+          <a href="<%= root_path %>">ask</a>
+
+          <div>|</div>
+
+          <% # show link %>
+          <a href="<%= root_path %>">show</a>
+
+          <div>|</div>
+
+          <% # jobs link %>
+          <a href="<%= root_path %>">jobs</a>
+
+          <div>|</div>
+
+          <% # submit link %>
+          <a href="<%= root_path %>">submit</a>
+
+          <% # login link %>
+          <div class="absolute right-0" >
+            <a href="<%= root_path %>">login</a>
+          </div>
+
+        </div>
+
+      </div>
+
       <%= yield %>
     </main>
 
