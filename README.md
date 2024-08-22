@@ -2,37 +2,52 @@
 
 [Hackernews](https://news.ycombinator.com/) by Y Combinator, my way.
 
-Leverages the [HackerNews API](https://github.com/HackerNews/API), and is bootstrapped via the [docker-rails-example](https://github.com/nickjj/docker-rails-example/tree/main) project by [Nick Janetakis](https://nickjanetakis.com/). Please check out their awesome work.
+Leverages the [HackerNews API](https://github.com/HackerNews/API), and is
+bootstrapped via the
+[docker-rails-example](https://github.com/nickjj/docker-rails-example/tree/main)
+project by [Nick Janetakis](https://nickjanetakis.com/). Please check out their
+awesome work.
 
-For details on the project's base Rails and Docker configurations, see the [`docker-rails-example/README`](https://github.com/nickjj/docker-rails-example/blob/c2e3a4bec4bf355b1c6882f34dd74eb438035a50/README.md).
+For details on the project's base Rails and Docker configurations, see the
+[`docker-rails-example/README`](https://github.com/nickjj/docker-rails-example/blob/c2e3a4bec4bf355b1c6882f34dd74eb438035a50/README.md).
 
 ## TODOs
 
 My list of WIP TODOs. Peridically sort these by priority!
 
-* [ ] In-Progress: `/news` (root)
-
-  Renders some group of 30 posts from `/topstories`. Accepts query param `p` to know what group to display.
-
 * [ ] Fix `./run ruby-lint -a` to work properly.
 
-* [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date. Or figure out how to cleanly rebase from `docker-rails-example`.
+* [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date.
+      Or figure out how to cleanly rebase from `docker-rails-example`.
 
 * [ ] Update tests and add to reflect changes to `HackerNews.get`
 
 * [ ] Handle future API changes properly
 
-  > For versioning purposes, only removal of a non-optional field or alteration of an existing field will be considered incompatible changes. Clients should gracefully handle additional fields they don't expect, and simply ignore them.
+  > For versioning purposes, only removal of a non-optional field or alteration
+  > of an existing field will be considered incompatible changes. Clients should
+  > gracefully handle additional fields they don't expect, and simply ignore
+  > them.
+
+* [ ] Address in-source TODOs
+
+* [ ] Add `markdownlint` pre-commit hook or something like it. Also add it to
+      the Docker linter setup.
 
 ### Completed/Archived
 
 * [x] Plan main page
 
-  Should mimic news.ycombinator.com landing page. This will inform controller design and model relationships.
+  Should mimic news.ycombinator.com landing page. This will inform controller
+  design and model relationships.
 
-  Btw, [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how) a write-up on the ranking algorithm, which will be needed.
+  Btw,
+  [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how)
+  a write-up on the ranking algorithm, which will be needed.
   
-  What _is_ the HN main page API endpoint, or sorting method? It's not immediately clear. Let's make up something and move on. Since the HN API talks about `/topstories` first, that's what I'm going to do.
+  What _is_ the HN main page API endpoint, or sorting method? It's not
+  immediately clear. Let's make up something and move on. Since the HN API talks
+  about `/topstories` first, that's what I'm going to do.
 
 * [X] Bootstrap project
 
@@ -44,7 +59,8 @@ My list of WIP TODOs. Peridically sort these by priority!
 
 * [X] Add services/HackerNews tests
 
-  Add `test/services/hacker_news_test.rb` to test service. In the future I'd like to swap RSpec for Minitest.
+  Add `test/services/hacker_news_test.rb` to test service. In the future I'd
+  like to swap RSpec for Minitest.
 
 * [X] Add ruby lint command to `run`
 
@@ -52,19 +68,26 @@ My list of WIP TODOs. Peridically sort these by priority!
 
   * [X] Check on how to access Postgresql database
 
-    Run `./run psql` and then e.g. `\c hackernews_development` to access the dev DB. `\d` to see the tables. `select * from items` for all rows from e.g. `items`.
+    Run `./run psql` and then e.g. `\c hackernews_development` to access the dev
+    DB. `\d` to see the tables. `select * from items` for all rows from e.g.
+    `items`.
     
-    To delete all content from a table via psql interface: `TRUNCATE tablename RESTART IDENTITY CASCADE;`. This command is the preferred way to delete rows, and restarts auto-incrementing counters. The cascade directive says to remove references to the deleted items.
+    To delete all content from a table via psql interface: `TRUNCATE tablename
+    RESTART IDENTITY CASCADE;`. This command is the preferred way to delete
+    rows, and restarts auto-incrementing counters. The cascade directive says to
+    remove references to the deleted items.
 
   * [X] Determine how to create tables in Rails
 
-    `./run rails g model ExampleModel` for creating a model and `./run rails g migration` to create a migration
+    `./run rails g model ExampleModel` for creating a model and `./run rails g
+    migration` to create a migration
 
   * [X] Create `Items` table
 
   * [X] Create `Users` table
 
-  * [ ] Create worker task (or the like) to populate this DB with actual HN data.
+  * [ ] Create worker task (or the like) to populate this DB with actual HN
+        data.
 
   * [ ] Decide how much HN data we can hold on to.
 
@@ -72,12 +95,23 @@ My list of WIP TODOs. Peridically sort these by priority!
 
   Plan: rake tasks to keep DB mirror of HN in sync as often as feasible
   
-  Max history configuration? I.e., do we create a way for us to only mirror a portion of the DB, as opposed to the whole thing? This would be ideal for development and deployment testing.
+  Max history configuration? I.e., do we create a way for us to only mirror a
+  portion of the DB, as opposed to the whole thing? This would be ideal for
+  development and deployment testing.
   
   1. Check if DB is out of sync. What tables are we mirroring?
-  2. Sync DB. Spawn worker thread to update DB. Make sure we aren't locking the DB during this whole thread, only on writes to the database.
+  2. Sync DB. Spawn worker thread to update DB. Make sure we aren't locking the
+     DB during this whole thread, only on writes to the database.
   
-  What if instead of attempting to mirror the whole DB, I just start adding "encountered" items to the DB passively? Then, as a user navigates, we first check if the item exists in our local db. If not, we request it and add it to the DB.
+  What if instead of attempting to mirror the whole DB, I just start adding
+  "encountered" items to the DB passively? Then, as a user navigates, we first
+  check if the item exists in our local db. If not, we request it and add it to
+  the DB.
+
+* [X] `/news` (root)
+
+  Renders some group of 30 posts from `/topstories`. Accepts query param `p` to
+  know what group to display.
 
 ## Database Implementation
 
@@ -85,29 +119,44 @@ See [Rails schema](/db/schema.rb) for current schema
 
 ### `Items` table
 
-* `Item.hn_id` is a _unique, not null integer_. Corresponds to HackerNews API Item.id field.
+* `Item.hn_id` is a _unique, not null integer_. Corresponds to HackerNews API
+  Item.id field.
 * `Item.deleted` is a _boolean_. True if the item is deleted.
-* `Item.context` is an _enum_. It corresponds to the HackerNews API User.type -- I changed it to avoid potentially causing issues with rails.
+* `Item.context` is an _enum_. It corresponds to the HackerNews API User.type --
+  I changed it to avoid potentially causing issues with rails.
 * `Item.by` is a _string_, most likely a `User.hn_id` (unique string).
-* `Item.time` is an _integer_, but it represents Unix Time. It might need special treatment depending on what I need to do with it.
-* `Item.text` is _text_ in DB, and represents HTML in HackerNews. "The comment, story, or poll text".
-* `Item.dead` is a _boolean_. True if the item is dead (I don't presently know what that means).
-* `Item.parent` is a has_one kind of relationship. Item only has one parent. Either another comment or the story. `Item.hn_id`.
-* `Item.poll` is an _integer_, which should be `Item.hn_id`. Pollopt's associated poll.
-* `Item.kids` is an _integer array_, that stores the `Item.hn_id`(s) of the items comments, in "ranked display order".
+* `Item.time` is an _integer_, but it represents Unix Time. It might need
+  special treatment depending on what I need to do with it.
+* `Item.text` is _text_ in DB, and represents HTML in HackerNews. "The comment,
+  story, or poll text".
+* `Item.dead` is a _boolean_. True if the item is dead (I don't presently know
+  what that means).
+* `Item.parent` is a has_one kind of relationship. Item only has one parent.
+  Either another comment or the story. `Item.hn_id`.
+* `Item.poll` is an _integer_, which should be `Item.hn_id`. Pollopt's
+  associated poll.
+* `Item.kids` is an _integer array_, that stores the `Item.hn_id`(s) of the
+  items comments, in "ranked display order".
 * `Item.url` is _text_. Url of the story.
-* `Item.score` is an _integer_, reprenting the story's score... Meaning? It's also the votes for a `pollopt`.
+* `Item.score` is an _integer_, reprenting the story's score... Meaning? It's
+  also the votes for a `pollopt`.
 * `Item.title` is _text_. The title of a story, poll, or job. HTML.
-* `Item.parts` is an _integer array_, storing `Item.hn_id`(s) of pollopts in display order.
-* `Item.descendants` is __currently__ an _integer array_, but I am not sure this is appropriate. "In the case of stories or polls, the total comment count." So maybe it should instead just be an integer.
+* `Item.parts` is an _integer array_, storing `Item.hn_id`(s) of pollopts in
+  display order.
+* `Item.descendants` is __currently__ an _integer array_, but I am not sure this
+  is appropriate. "In the case of stories or polls, the total comment count." So
+  maybe it should instead just be an integer.
 
 ### `Users` table
 
-* `User.hn_id` is a _unique, not null string_. Corresponds to HackerNews API User.id field. Case sensitive.
-* `User.created` is an _integer_, representing when the User was created in HN, in Unix Time. Same considerations for this field as Item.time.
+* `User.hn_id` is a _unique, not null string_. Corresponds to HackerNews API
+  User.id field. Case sensitive.
+* `User.created` is an _integer_, representing when the User was created in HN,
+  in Unix Time. Same considerations for this field as Item.time.
 * `User.karma` is an _integer_. "The user's karma."
 * `User.about` is _text_. "The user's optional self-description. HTML."
-* `User.submitted` is an _integer array_. "List of the user's stories, polls and comments." It should be a list of `Item.hn_id`(s).
+* `User.submitted` is an _integer array_. "List of the user's stories, polls and
+  comments." It should be a list of `Item.hn_id`(s).
 
 ## Development Changes
 
@@ -214,6 +263,35 @@ initial version.
   
   Start work on `/from`, which is reached by clicking the `past` link in the nav
   menu. Need to figure out how to create that list of stories.
+  
+* [2024-08-21 Wed]
+
+  I've added a lot in this round of code changes. Too much to really document
+  without spending a lot of time doing so. Iirc, most of the changes were
+  related to getting some kind of views for all the navigation headers, and then
+  a lot went into figuring out how to create the comment hierarchy for a given
+  story.
+  
+  Something I've noticed is that when I render the HTML given to us by HN API
+  for a comment Item, Tailwindcss is styling the HTML elements we render with
+  the preflight configs. This breaks the styling in a variety of ways.
+  Unfortunately, we still want the styling we've manually applied, but not the
+  preflights. I haven't found an easy way to remedy this, so this item should be
+  a TODO for down the line.
+  
+  Another issue is load times for large (> ~ 30 total) comment trees is pretty
+  abysmal. This is due to the fact that I am making a new request for each level
+  in a hierarchy. We are still taking advantage of threading all the "kids" of a
+  particular item (using `ApplicationController::get_items_from_ids`), but each
+  level of comments still has to wait on the previous. For large comment trees,
+  this is _slow_. Without using a database, I am not sure how resolve this
+  issue.
+  
+  I have a massive amount of `# TODO` comments in the code. Eventually I'll need
+  to address them. I also need to refactor a _lot_. For example, I've made it so
+  the `views/shared/_items` partial has a ton of `if` blocks to determine small
+  styling details based on whether it's rendered in the main list of Items or a
+  detail view of an item (with comments).
 
 ---
 
