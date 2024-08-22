@@ -1,0 +1,72 @@
+
+<div class="w-full h-6 flex flex-row items-center justify-start bg-hackernews-orange">
+
+
+    <% # Hacker News nav menu %>
+    <% # [Y] *Hacker News* new | past | comments | ask | show | jobs | submit     ...       login %>
+
+    <% # Create the Y logo border, set size and border %>
+    <div class="size-[20px] m-[2px] flex items-center justify-center border-solid border-[1px] border-white">
+        <a href="<%= root_path %>">
+        <%= image_tag "y18.svg" %>
+        </a>
+    </div>
+
+    <div class="w-full flex flex-row mx-1 relative space-x-1">
+
+        <% # Hacker News title %>
+        <div class="font-bold mr-1">
+        <a href="<%= news_path %>">Hacker News</a>
+        </div>
+
+        <% if local_assigns[:highlight_new] %>
+            <a class="text-white" href=<%= new_path %>>new</a>
+        <% else %>
+            <a href=<%= new_path %>>new</a>
+        <% end %>
+
+        <div>|</div>
+
+        <% if local_assigns[:highlight_past] %>
+            <a class="text-white" href=<%= past_path %>>past</a>
+        <% else %>
+            <a href=<%= past_path %>>past</a>
+        <% end %>
+
+        <div>|</div>
+
+        <% # TODO: comments link %>
+        <a href="<%= root_path %>">comments</a>
+
+        <div>|</div>
+
+        <% # TODO: ask link %>
+        <% if local_assigns[:highlight_ask] %>
+            <a class="text-white" href=<%= ask_path %>>ask</a>
+        <% else %>
+            <a href=<%= ask_path %>>ask</a>
+        <% end %>
+
+        <div>|</div>
+
+        <% # TODO: show link %>
+        <a href="<%= root_path %>">show</a>
+
+        <div>|</div>
+
+        <% # TODO: jobs link %>
+        <a href="<%= root_path %>">jobs</a>
+
+        <div>|</div>
+
+        <% # TODO: submit link %>
+        <a href="<%= root_path %>">submit</a>
+
+        <% # TODO: login link %>
+        <div class="absolute right-0" >
+            <a href="<%= root_path %>">login</a>
+        </div>
+
+    </div>
+
+</div>

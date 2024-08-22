@@ -29,3 +29,12 @@
 
 en:
   hackernews: "Hackernews!"
+  datetime:
+    distance_in_words:
+      short:
+        about_x_hours:
+          one: '1 hour'
+          other: '%{count} hours'
+        x_minutes:
+          one: '1 minute'
+          other: '%{count} minutes'

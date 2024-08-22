@@ -4,9 +4,10 @@ Rails.application.routes.draw do
   root to: "news#index"
 
   get "/news/", to: "news#index", as: :news
-
-  get "/home/", to: "pages#home", as: :home
-
+  get "/newest/", to: "new#index", as: :new
+  get "/front/", to: "past#index", as: :past
+  get "/ask/", to: "ask#index", as: :ask
+  get "/item/", to: "item#index", as: :item
   get "/up/", to: "up#index", as: :up
   get "/up/databases", to: "up#databases", as: :up_databases
 

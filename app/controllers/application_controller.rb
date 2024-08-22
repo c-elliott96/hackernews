@@ -3,9 +3,36 @@
 # Base application controller. All other controllers typically extend
 # ApplicationController.
 class ApplicationController < ActionController::Base
+  # /topstories, /newstores, /beststories give us 500 stories. We display 30
+  # stories per page.
+  ITEMS_PER_PAGE = 30
+  TOTAL_PAGES = 16
+
+  def get_item_from_id(id) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    item = HackerNews.get(resource: :item, id:)
+    Item.new do |i|
+      i.hn_id       = item[:data][:id]
+      i.deleted     = item[:data][:deleted]
+      i.by          = item[:data][:by]
+      i.time        = item[:data][:time]
+      i.text        = item[:data][:text]
+      i.dead        = item[:data][:dead]
+      i.parent      = item[:data][:parent]
+      i.poll        = item[:data][:poll]
+      i.url         = item[:data][:url]
+      i.score       = item[:data][:score]
+      i.title       = item[:data][:title]
+      i.kids        = item[:data][:kids]
+      i.parts       = item[:data][:parts]
+      i.descendants = item[:data][:descendants]
+      i.context     = item[:data][:type]
+    end
+  end
+
   def get_items_from_ids(ids) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     # Gets a range of items from HN API, using threads. Returns a list of Items.
     # Currently does not save them to the DB.
+    #
     # TODO: DB optimization.
     #   We will need to
     #       1. Check what items in the list of ids we have in the DB. Get them.
@@ -44,5 +71,39 @@ class ApplicationController < ActionController::Base
       end
     end
     items
+  end
+
+  def normalized_page
+    if invalid_param_p? params[:p]
+      1
+    else
+      params[:p].to_i
+    end
+  end
+
+  def invalid_param_p?(param_p)
+    param_p.nil? || param_p.empty? || (param_p.to_i > TOTAL_PAGES || param_p.to_i < 1)
+  end
+
+  def page_range
+    (@page - 1) * 30..(@page * 30) - 1
+  end
+
+  def url_domain(url)
+    return "" if url.nil? || url.empty?
+
+    # It appears that HN gives special treatment to github domains, e.g.
+    # displaying github.com/vladm7 instead of just github.com, which implies an
+    # internal whitelist and formatting to such things, but I won't worry about
+    # that for now.
+    uri = URI(url)
+    "(#{PublicSuffix.parse(uri.hostname).domain})"
+  end
+
+  def score_string(score, by)
+    return "" unless !score.nil? || !score.empty? || score.zero?
+
+    point_or_points = score == 1 ? "point" : "points"
+    "#{score} #{point_or_points} by #{by}"
   end
 end

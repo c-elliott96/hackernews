@@ -204,7 +204,16 @@ initial version.
   
 * [2024-07-13 Sat]
 
-Work on `/news` view. Mostly styling work. Lots of tailwind trial and error.
+  Work on `/news` view. Mostly styling work. Lots of tailwind trial and error.
+  
+* [2024-07-14 Sun]
+
+  Work on `/new` (renamed the url resource to "/newest", to reflect HN).
+  Refactored to allow use of `items` partial for rendering a list of stories.
+  Some other styling touch-ups.
+  
+  Start work on `/from`, which is reached by clicking the `past` link in the nav
+  menu. Need to figure out how to create that list of stories.
 
 ---
 

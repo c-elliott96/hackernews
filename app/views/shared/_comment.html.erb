@@ -1,0 +1,73 @@
+<% # Render a comment and its children, recursively %>
+<div class="mb-1 ml-2">
+    <% # User details line (row 1) %>
+    <div id=<%= item.hn_id %> class="flex flex-row items-center text-small">
+        <% # HN triangle for upvote action %>
+        <div class="size-[10px] mx-0.5">
+            <a href=<%= root_url %>>
+                <%= image_tag "triangle.svg" %>
+            </a>
+        </div>
+
+        <div class="mx-1">
+            <%= item.by %>
+        </div>
+
+        <div>
+        <%= item.score_string %> <%= distance_of_time_in_words(item.time, Time.now, scope: 'datetime.distance_in_words.short') %> ago
+        </div>
+
+        <div class="mx-1">
+            |
+        </div>
+
+        <% if prev_item %>
+            <div class="mr-1">
+                <% # TODO Fix 'next' view %>
+                <a href=<%= "#{request.original_url}\##{prev_item.hn_id}" %>>prev</a>
+            </div>
+        <% end %>
+
+        <% if prev_item && next_item %>
+            <div class="mr-1">
+                |
+            </div>
+        <% end %>
+
+        <% if next_item %>
+            <div class="mr-1">
+                <% # TODO Fix 'next' view %>
+                <a href=<%= "#{request.original_url}\##{next_item.hn_id}" %>>next</a>
+            </div>
+        <% end %>
+
+        <% # TODO Fix this to use JS to hide this comment tree %>
+        <div>
+            [-]
+        </div>
+    </div>
+    <% # User content line (row 2) %>
+    <div class="ml-5 my-1 text-content text-black">
+        <div>
+            <% # TODO Fix tailwindcss preflight issues (<p> margins, <a> underline, etc, ...) %>
+            <% # Explainer: tailwindcss uses a "preflight" set of styling %>
+            <% # defaults, which you have to deliberately override.%>
+            <%= raw sanitize item.text %>
+        </div>
+    </div>
+
+    <div class="ml-5 my-1 text-xsmall text-black">
+        <a href=<%= root_url %> class="underline">reply</a>
+    </div>
+
+    <% if item.kids_items %>
+        <% item.kids_items.each_with_index do |kid_item, i| %>
+            <% next_item = i < item.kids_items.length - 1 ? item.kids_items[i+1] : nil %>
+            <% prev_item = i > 0 ? item.kids_items[i-1] : nil %>
+
+            <div class="ml-7">
+                <%= render partial: "shared/comment", locals: { item: kid_item, next_item: next_item, prev_item: prev_item } %>
+            </div>
+        <% end %>
+    <% end %>
+</div>
