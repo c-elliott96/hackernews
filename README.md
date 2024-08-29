@@ -11,6 +11,43 @@ awesome work.
 For details on the project's base Rails and Docker configurations, see the
 [`docker-rails-example/README`](https://github.com/nickjj/docker-rails-example/blob/c2e3a4bec4bf355b1c6882f34dd74eb438035a50/README.md).
 
+## Setup
+
+Here are some steps necessary for running this project on a new device.
+
+First, you should have Docker installed.
+
+### Prepare the environment
+
+1. Set up the environment variables in `.env`
+
+  1. `cp .env.example .env`
+
+  2. Edit `.env` with the following changes:
+
+    ```diff
+    55c55
+    < export POSTGRES_USER=hello
+    ---
+    > export POSTGRES_USER=hackernews
+    57,59c57,59
+    < #export POSTGRES_DB=hello
+    < #export POSTGRES_HOST=postgres
+    < #export POSTGRES_PORT=5432
+    ---
+    > export POSTGRES_DB=hackernews
+    > export POSTGRES_HOST=postgres
+    > export POSTGRES_PORT=5432
+    ```
+
+2. Build the image and run it
+
+  `docker compose build && docker compose run -d`
+
+3. Setup the database
+
+  `./run rails db:prepare`
+
 ## TODOs
 
 My list of WIP TODOs. Peridically sort these by priority!
@@ -44,7 +81,7 @@ My list of WIP TODOs. Peridically sort these by priority!
   Btw,
   [here's](https://vigneshwarar.substack.com/p/hackernews-ranking-algorithm-how)
   a write-up on the ranking algorithm, which will be needed.
-  
+
   What _is_ the HN main page API endpoint, or sorting method? It's not
   immediately clear. Let's make up something and move on. Since the HN API talks
   about `/topstories` first, that's what I'm going to do.
@@ -71,7 +108,7 @@ My list of WIP TODOs. Peridically sort these by priority!
     Run `./run psql` and then e.g. `\c hackernews_development` to access the dev
     DB. `\d` to see the tables. `select * from items` for all rows from e.g.
     `items`.
-    
+
     To delete all content from a table via psql interface: `TRUNCATE tablename
     RESTART IDENTITY CASCADE;`. This command is the preferred way to delete
     rows, and restarts auto-incrementing counters. The cascade directive says to
@@ -94,15 +131,15 @@ My list of WIP TODOs. Peridically sort these by priority!
 * [ ] Populate DB: Rake tasks
 
   Plan: rake tasks to keep DB mirror of HN in sync as often as feasible
-  
+
   Max history configuration? I.e., do we create a way for us to only mirror a
   portion of the DB, as opposed to the whole thing? This would be ideal for
   development and deployment testing.
-  
+
   1. Check if DB is out of sync. What tables are we mirroring?
   2. Sync DB. Spawn worker thread to update DB. Make sure we aren't locking the
      DB during this whole thread, only on writes to the database.
-  
+
   What if instead of attempting to mirror the whole DB, I just start adding
   "encountered" items to the DB passively? Then, as a user navigates, we first
   check if the item exists in our local db. If not, we request it and add it to
@@ -163,7 +200,7 @@ See [Rails schema](/db/schema.rb) for current schema
 Note: This subsection should be replaced by the CHANGELOG when I release an
 initial version.
 
-* [2024-05-29] 
+* [2024-05-29]
 
   I added a log WARN message to HackerNews.get if we attempt to access a
   resource that returns `nil` for the response body. This shouldn't happen, but
@@ -175,17 +212,17 @@ initial version.
   much data the whole HN dump will consume.
   [This](https://news.ycombinator.com/item?id=38861301) post seems to indicate
   that the dataset should be ~5-6GB.
-  
-* [2024-06-23 Sun] -- [2024-06-25 Tue] 
+
+* [2024-06-23 Sun] -- [2024-06-25 Tue]
 
   I've decided not to worry about the database stuff yet. I've spent too much
   time trying to figure out how best to do that, and too little developing. For
   now, let's just make a fresh request for every new resource we need. Later we
   can adding caching/DB support to improve things. I'll leave the DB setup as
   is, unused.
-  
+
   Adding code like the following improved response times considerably:
-  
+
   ```ruby
   items = []
   threads = []
@@ -197,7 +234,7 @@ initial version.
   end
   threads.each(&:join)
   ```
-  
+
   Where we went from getting story details for 30 items in about 5-7 seconds to
   doing so in about 0.5 - 2 seconds. Adding threads for these requests was a
   good choice, it seems. I did attempt to take things a step further in that I
@@ -214,19 +251,19 @@ initial version.
   would like to come back to DB/cache optimization after I get a v0 application
   completed.
 
-* [2024-06-26 Wed] 
+* [2024-06-26 Wed]
 
   I added the story rank functionality. Now, stories in `/news` display the
   story's rank from HackerNews' `/topstories` resource.
-  
+
   I also added the `More` button to load the next set of stories. This works by
   incrementing the `p` query param and making a `get` request to `/news`. A
   caveat: the resource we rely on only returns the top 500 stories. Page 16 of
   this list (in ranges of 30) ends at 480, so loading page 17 would attempt to
   load 481 - 510. I should add logic to the controller to truncate the results
   if we're at the end.
-  
-* [2024-06-28 Fri] 
+
+* [2024-06-28 Fri]
 
   I added the ability to view the secondary and top-level domain in parenthesis,
   like is done on HackerNews. However, it is currently just informational. On
@@ -234,14 +271,14 @@ initial version.
   called `/from?site=...`, where the user is then directed to a list of all
   posts that reference that particular domain. I will need to figure out if
   doing this is possible and easy-enough.
-  
+
   I also added the first piece of the secondary row of information about a
   particular story: the points, user, and story age description (e.g. `66 points
   by todsacerdoti 4 months ago`).
-  
+
   I still need to implement the `hide` link, which apparently makes a request to
   `/hide` which I _think_ is an alias for `/snip-story`?
-  
+
   ```
   Request URL:
     https://news.ycombinator.com/snip-story?id=40817430&auth=106a51f53142f01a93cadd9014febd833fb21d51&onop=news
@@ -250,20 +287,20 @@ initial version.
   Status Code:
     200 OK
   ```
-  
+
 * [2024-07-13 Sat]
 
   Work on `/news` view. Mostly styling work. Lots of tailwind trial and error.
-  
+
 * [2024-07-14 Sun]
 
   Work on `/new` (renamed the url resource to "/newest", to reflect HN).
   Refactored to allow use of `items` partial for rendering a list of stories.
   Some other styling touch-ups.
-  
+
   Start work on `/from`, which is reached by clicking the `past` link in the nav
   menu. Need to figure out how to create that list of stories.
-  
+
 * [2024-08-21 Wed]
 
   I've added a lot in this round of code changes. Too much to really document
@@ -271,14 +308,14 @@ initial version.
   related to getting some kind of views for all the navigation headers, and then
   a lot went into figuring out how to create the comment hierarchy for a given
   story.
-  
+
   Something I've noticed is that when I render the HTML given to us by HN API
   for a comment Item, Tailwindcss is styling the HTML elements we render with
   the preflight configs. This breaks the styling in a variety of ways.
   Unfortunately, we still want the styling we've manually applied, but not the
   preflights. I haven't found an easy way to remedy this, so this item should be
   a TODO for down the line.
-  
+
   Another issue is load times for large (> ~ 30 total) comment trees is pretty
   abysmal. This is due to the fact that I am making a new request for each level
   in a hierarchy. We are still taking advantage of threading all the "kids" of a
@@ -286,7 +323,7 @@ initial version.
   level of comments still has to wait on the previous. For large comment trees,
   this is _slow_. Without using a database, I am not sure how resolve this
   issue.
-  
+
   I have a massive amount of `# TODO` comments in the code. Eventually I'll need
   to address them. I also need to refactor a _lot_. For example, I've made it so
   the `views/shared/_items` partial has a ton of `if` blocks to determine small
