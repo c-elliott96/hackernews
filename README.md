@@ -42,11 +42,11 @@ First, you should have Docker installed.
 
 2. Build the image and run it
 
-  `docker compose build && docker compose run -d`
+   `docker compose build && docker compose run -d`
 
 3. Setup the database
 
-  `./run rails db:prepare`
+   `./run rails db:prepare`
 
 ## TODOs
 
