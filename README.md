@@ -25,20 +25,20 @@ First, you should have Docker installed.
 
   2. Edit `.env` with the following changes:
 
-    ```diff
-    55c55
-    < export POSTGRES_USER=hello
-    ---
-    > export POSTGRES_USER=hackernews
-    57,59c57,59
-    < #export POSTGRES_DB=hello
-    < #export POSTGRES_HOST=postgres
-    < #export POSTGRES_PORT=5432
-    ---
-    > export POSTGRES_DB=hackernews
-    > export POSTGRES_HOST=postgres
-    > export POSTGRES_PORT=5432
-    ```
+  ```diff
+  55c55
+  < export POSTGRES_USER=hello
+  ---
+  > export POSTGRES_USER=hackernews
+  57,59c57,59
+  < #export POSTGRES_DB=hello
+  < #export POSTGRES_HOST=postgres
+  < #export POSTGRES_PORT=5432
+  ---
+  > export POSTGRES_DB=hackernews
+  > export POSTGRES_HOST=postgres
+  > export POSTGRES_PORT=5432
+  ```
 
 2. Build the image and run it
 
