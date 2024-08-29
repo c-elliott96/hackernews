@@ -52,12 +52,21 @@ First, you should have Docker installed.
 
 My list of WIP TODOs. Peridically sort these by priority!
 
-* [ ] Fix `./run ruby-lint -a` to work properly.
+* [ ] Fix `./run ruby-lint -a` to work properly
 
-* [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date.
-      Or figure out how to cleanly rebase from `docker-rails-example`.
+* [ ] Figure out styling issues when rendering comment HTML
 
-* [ ] Update tests and add to reflect changes to `HackerNews.get`
+  Tailwindcss's preflight base styling is interfering with the rendering of the
+  HTML we get from HackerNews comments. For example, the `<p>` tags are not
+  creating spaces between paragraphs. We render this markup directly, which
+  means we'll have to somehow dynamically add classes to this markup, or
+  determine some other solution.
+
+* [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date
+
+* [ ] Figure out how to cleanly rebase from `docker-rails-example`
+
+* [ ] Update tests
 
 * [ ] Handle future API changes properly
 
@@ -66,10 +75,12 @@ My list of WIP TODOs. Peridically sort these by priority!
   > gracefully handle additional fields they don't expect, and simply ignore
   > them.
 
-* [ ] Address in-source TODOs
+* [ ] Address in-source TODOs not specified here
+
+* [ ] Broad refactor
 
 * [ ] Add `markdownlint` pre-commit hook or something like it. Also add it to
-      the Docker linter setup.
+      the Docker linter setup
 
 ### Completed/Archived
 
@@ -279,7 +290,7 @@ initial version.
   I still need to implement the `hide` link, which apparently makes a request to
   `/hide` which I _think_ is an alias for `/snip-story`?
 
-  ```
+  ```text
   Request URL:
     https://news.ycombinator.com/snip-story?id=40817430&auth=106a51f53142f01a93cadd9014febd833fb21d51&onop=news
   Request Method:

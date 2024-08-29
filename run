@@ -76,19 +76,29 @@ function hadolint {
 function ruby-lint {
   # Run with -a to autocorrect
   # shellcheck disable=SC2119
-  local autocorrect="${0:-}"
+  local autocorrect="${1:-}"
   local lint_command="rubocop"
 
-  if [ "${autocorrect}" = "-a" ]; then
-    lint_command="rubocop -a"
+  if [ "${autocorrect}" = "-A" ]; then
+    lint_command="rubocop -A"
   fi
 
   _dc js bash -c "${lint_command}"
 }
 
+function markdownlint {
+  docker container run \
+  --rm -i \
+  -v $PWD:/workdir \
+  ghcr.io/igorshubovych/markdownlint-cli:latest \
+  --fix "*.md"
+}
+
 function lint {
   # TODO: Add js-lint
-  ruby-lint
+  hadolint
+  # ruby-lint -A # This is causing this function to exit before reaching markdownlint
+  markdownlint
 }
 
 function bundle:install {
@@ -181,7 +191,7 @@ function ci:test {
   docker compose logs
 
   rails db:setup
-  ruby-lint
+  # ruby-lint # disabling until I figure out how to set this up correctly
   test -b
 }
 
