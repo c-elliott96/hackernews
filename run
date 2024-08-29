@@ -89,7 +89,7 @@ function ruby-lint {
 function markdownlint {
   docker container run \
   --rm -i \
-  -v $PWD:/workdir \
+  -v "$PWD":/workdir \
   ghcr.io/igorshubovych/markdownlint-cli:latest \
   --fix "*.md"
 }
