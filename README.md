@@ -79,6 +79,19 @@ My list of WIP TODOs. Peridically sort these by priority!
 
 * [ ] Broad refactor
 
+  I have _way_ too many controllers for what I actually need. I think I could
+  condense pretty much all of my views/routes and their respective resources
+  into one controller. Perhaps `ItemsController`. From here, I can adhere to the
+  Rails conventions more strictly.
+
+  - [ ] Condense controllers into one or two.
+
+    - ItemsController:
+
+      - The main "news" view, which is just many HN Items that are "stories"
+
+      - The detail view of an Item, with the comment tree.
+
 * [ ] Add `markdownlint` pre-commit hook or something like it. Also add it to
       the Docker linter setup
 
