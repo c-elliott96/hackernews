@@ -1,0 +1,67 @@
+<% # Displays the "title line" and "subtext" for an Item %>
+
+<% # On the real HackerNews, this is a table. I went for a different %>
+<% # approach, although I don't have a good rationalization for why, other %>
+<% # than that's what I did and I don't want to change it right now. %>
+
+<div class="mb-0.5">
+    <% # Item row 1 %>
+    <div class="flex flex-row items-center">
+        <div class=<%= "#{item_rank_width_class}" %>>
+            <div class="text-right"><%= item.rank %>.</div>
+        </div>
+
+        <div class="size-[10px] mx-0.5">
+            <a href=<%= root_url %>>
+                <%= image_tag "triangle.svg" %>
+            </a>
+        </div>
+
+        <div class="flex items-center">
+            <% # TODO: For the case of Ask HN items, the link should be the item details view %>
+            <a class="text-black mr-1" href="<%= item.url %>" target="_blank">
+                <%= item.title %>
+            </a>
+
+            <span class="inline-block align-bottom">
+                <% # TODO: Make this link go to `/from`, where it lists all posts from that site %>
+                <a class="text-small" href=<%= root_url %>><%= url_domain(item.url) %></a>
+            </span>
+        </div>
+    </div>
+
+    <% # Item row 2 %>
+    <div class="flex flex-row text-xsmall">
+
+        <% # TODO: story.score_string functionality belongs only in front-end. %>
+        <% # TODO: `/user` link %>
+        <% # TODO: Add score_string logic to item_controller, or refactor %>
+        <div class="ml-10">
+            <%= score_string(item.score, item.by) %> <%= time_ago_in_words(item.time) %> ago
+        </div>
+
+        <div class="mx-1">
+            |
+        </div>
+
+        <% # TODO: Make url hide item and refresh list %>
+        <div class="mr-1">
+            <a href=<%= root_url %>>hide</a>
+        </div>
+
+        <div class="mr-1">
+            |
+        </div>
+
+        <div>
+            <% # TODO: make url direct to item view %>
+            <% if item.descendants.is_a?(Integer) && item.descendants > 0 %>
+                <!-- <a href=<%= item_path({ id: item.hn_id }) %>><%= item.descendants %> <%= item.descendants == 1 ? "comment" : "comments" %></a> -->
+                <%= link_to "#{item.descendants} #{(item.descendants == 1 ? "comment" : "comments")}", controller: "items", action: "show", id: item.hn_id %>
+            <% else %>
+                <!-- <a href=<%= item_path({ id: item.hn_id }) %>>discuss</a> -->
+                <%= link_to "discuss", controller: "items", action: "show", id: item.hn_id %>
+            <% end %>
+        </div>
+    </div>
+</div>

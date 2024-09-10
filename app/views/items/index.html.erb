@@ -1,0 +1,15 @@
+<% # Displays the Items returned from HN#topstories API %>
+<% # This comprises the main landing page view. %>
+
+<%= render "navigation" %>
+
+<div class="mt-2 pr-3 text-hackernews-story-gray">
+    <% @items.each do |item| %>
+        <%= render partial: "index_item", locals: { item: item } %>
+    <% end %>
+
+    <% # TODO refactor so this workaround isn't necessary %>
+    <div class="ml-10 mt-2">
+        <%= button_to "More", { action: "index" }, { method: :get, params: { p: next_page } } %>
+    </div>
+</div>

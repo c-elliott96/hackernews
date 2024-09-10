@@ -6,7 +6,7 @@ class Item < ApplicationRecord
   # Allows an Item to reference other items, for the sake of handling comment
   # hierarchies
   has_many :kids_items, class_name: "Item",
-                        foreign_key: "parent_hn_id"
+                        foreign_key: "parent_item_id"
 
   belongs_to :parent_item, class_name: "Item", optional: true
 

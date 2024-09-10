@@ -1,0 +1,6 @@
+<% # Show comment tree %>
+<div class="mt-2 pr-3 text-hackernews-story-gray"
+    <% kids_items.each_with_index do |kid_item, i| %>
+        <%= render partial: "show_comment", locals: { item: kid_item, item_index: i } %>
+    <% end %>
+</div>

@@ -1,0 +1,11 @@
+<% # Displays a particular Item, e.g. when a user clicks "discuss" or %>
+<% # "<number> comments" from the ItemsController#show view. %>
+
+<% # Display the top-level Item (typically a story) %>
+
+<div class="mt-2 pr-3 text-hackernews-story-gray">
+    <div class="mb-1">
+        <%= render partial: "show_item_title", locals: { item: item } %>
+        <%= render partial: "show_item_subtext", locals: {item: item } %>
+    </div>
+</div>

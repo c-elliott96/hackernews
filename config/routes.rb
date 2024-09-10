@@ -1,13 +1,16 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  root to: "news#index"
+  # root to: "news#index"
+  root "items#index"
+  get "/news", to: "items#index", as: :news
+  get "/item", to: "items#show", as: :item
 
-  get "/news/", to: "news#index", as: :news
+  # get "/news/", to: "news#index", as: :news
   get "/newest/", to: "new#index", as: :new
   get "/front/", to: "past#index", as: :past
   get "/ask/", to: "ask#index", as: :ask
-  get "/item/", to: "item#index", as: :item
+  # get "/item/", to: "item#index", as: :item
   get "/up/", to: "up#index", as: :up
   get "/up/databases", to: "up#databases", as: :up_databases
 

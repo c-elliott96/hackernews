@@ -52,8 +52,6 @@ First, you should have Docker installed.
 
 My list of WIP TODOs. Peridically sort these by priority!
 
-* [ ] Fix `./run ruby-lint -a` to work properly
-
 * [ ] Figure out styling issues when rendering comment HTML
 
   Tailwindcss's preflight base styling is interfering with the rendering of the
@@ -77,6 +75,8 @@ My list of WIP TODOs. Peridically sort these by priority!
 
 * [ ] Address in-source TODOs not specified here
 
+* [ ] Create mobile-centric styling like HN
+
 * [ ] Broad refactor
 
   I have _way_ too many controllers for what I actually need. I think I could
@@ -84,18 +84,64 @@ My list of WIP TODOs. Peridically sort these by priority!
   into one controller. Perhaps `ItemsController`. From here, I can adhere to the
   Rails conventions more strictly.
 
-  - [ ] Condense controllers into one or two.
+  * [ ] ItemsController
 
-    - ItemsController:
+    Created the controller. I'm in the process of setting up ItemController
+    actions that are more aligned with Rails conventions. The `index` action
+    shows a list of Items (namely, the `/news` story items). The `show` action
+    will show the story item details.
 
-      - The main "news" view, which is just many HN Items that are "stories"
+    * [ ] `index`
 
-      - The detail view of an Item, with the comment tree.
+      * [X] Fix width of the Item rank: right now, the width of the rank depends
+      on the amount of characters, so if the rank goes from 9 on one line to 10
+      on the next, the alignment of the items in the 10th row and beyond is
+      further to the right. The width of the ranks should be that of the longest
+      rank element. This can probably be resolved by using Tailwind properly,
+      but I am not sure how at the moment.
 
-* [ ] Add `markdownlint` pre-commit hook or something like it. Also add it to
-      the Docker linter setup
+      What I did: I realized that we only have to consider a finite set of digit
+      lengths for the rank, which can be correllated directly to the page we've
+      viewing of the list. So, I just created a view helper method that takes in
+      the current page and returns a tailwind classname for the appropriate
+      width of the rank div. The underlying issue I was struggling with was that
+      I needed to pull out this width setting into a wrapping div, and then set
+      `text-right` in the anchor element itself.
+
+      * [ ] Fix the issues around the `More` button at the bottom. I want it to
+      be have as it does on Y Combinator.
+
+    * [ ] `show`
+
+      * [ ] Move the in-use partials to a more logical location. Investigate
+        refactoring them if necessary.
+
+      * [ ] Complete `views/items/_show_item.html.erb`.
+
+        * [ ] `_show_item_subtext_row.html.erb`
+
+  * [ ] Bug: Items that have been added to the database are not updated after
+    they are stored.
+
+    This is a problem, for example, with ItemsController#show. Because the main
+    item is already in the DB, the view does not recompute the comment tree, and
+    therefore does not fetch newly added comments.
+
+    Possible solution: add a worker task that checks the HackerNews `/updates`
+    resource. If we can run it frequently enough (and on a fast enough interval
+    to catch all the updates), we should be able to keep our DB rows somewhat up
+    to date?
 
 ### Completed/Archived
+
+* [X] Add `markdownlint` pre-commit hook or something like it. Also add it to
+      the Docker linter setup
+
+  Update: Added it to `./run` linter command. Runs someones markdownlint-cli
+  container. The container doesn't seem to shut down nicely, so remember to
+  prune every so often.
+
+* [X] Fix `./run ruby-lint -A` to work properly
 
 * [x] Plan main page
 

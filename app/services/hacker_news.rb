@@ -12,6 +12,8 @@ require "httparty"
 #   data: HASH OF DATA
 # }
 #
+# TODO: Add connection timeouts. https://github.com/ankane/the-ultimate-guide-to-ruby-timeouts?tab=readme-ov-file#httparty
+#
 module HackerNews
   class Error < StandardError; end
   class ArgumentError < Error; end
@@ -29,7 +31,8 @@ module HackerNews
     best_stories: "beststories",
     ask_stories: "askstories",
     show_stories: "showstories",
-    job_stories: "jobstories"
+    job_stories: "jobstories",
+    updates: "updates"
   }.freeze
 
   # Makes GET request after validating params. Returns a hash containing the

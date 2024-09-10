@@ -32,9 +32,12 @@ en:
   datetime:
     distance_in_words:
       short:
+        x_days:
+          one: "1 day"
+          other: "%{count} days"
         about_x_hours:
-          one: '1 hour'
-          other: '%{count} hours'
+          one: "1 hour"
+          other: "%{count} hours"
         x_minutes:
-          one: '1 minute'
-          other: '%{count} minutes'
+          one: "1 minute"
+          other: "%{count} minutes"

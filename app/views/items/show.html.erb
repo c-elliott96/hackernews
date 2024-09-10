@@ -1,0 +1,15 @@
+<%= render "navigation" %>
+
+<% # Display the top-level element %>
+<% # TODO: Refactor _items partial to support this kind of single-item view%>
+    <% # - item.rank doesn't apply %>
+    <% # - item.score_string %>
+    <% # - ml-10 on the second row is too far in a single-story item view %>
+    <% # - error-prone locals %>
+<% # render partial: "shared/items", locals: { items: [ @item ], is_story_view: true } %>
+<%= render partial: "show_item", locals: { item: @item } %>
+<%= render partial: "show_comments", locals: { kids_items: @item.kids_items } %>
+
+<% # Display the comment tree %>
+
+<% # Display the footer %>

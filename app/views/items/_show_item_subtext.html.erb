@@ -1,0 +1,40 @@
+<div class="flex flex-row text-xsmall">
+    <% # TODO: story.score_string functionality belongs only in front-end. %>
+    <% # TODO: `/user` link %>
+    <% # TODO: Add score_string logic to item_controller, or refactor %>
+    <div class="ml-7">
+        <%= score_string(item.score, item.by) %> <%= time_ago_in_words(item.time) %> ago
+    </div>
+
+    <div class="mx-1">
+        |
+    </div>
+
+    <% # TODO: Make url hide item and refresh list %>
+    <a href=<%= root_url %>>hide</a>
+
+    <div class="mx-1">
+        |
+    </div>
+
+    <a href=<%= root_url %>>past</a>
+
+    <div class="mx-1">
+        |
+    </div>
+
+    <a href=<%= root_url %>>favorite</a>
+
+    <div class="mx-1">
+        |
+    </div>
+
+    <div>
+        <% # TODO: make url direct to item view %>
+        <% if item.descendants.is_a?(Integer) && item.descendants > 0 %>
+            <a href=<%= item_path({ id: item.hn_id }) %>><%= item.descendants %> <%= item.descendants == 1 ? "comment" : "comments" %></a>
+        <% else %>
+            <a href=<%= item_path({ id: item.hn_id }) %>>discuss</a>
+        <% end %>
+    </div>
+</div>
