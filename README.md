@@ -221,5 +221,4 @@ for this document. I do also format dates in here similarly to inactive
 timestamps in Emacs' org-mode.
 
 <!-- References -->
-[todo-md]: https://github.com/todo-md/todo-md
 [todo.md]: TODO.md

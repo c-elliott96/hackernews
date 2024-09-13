@@ -39,7 +39,9 @@ In no particular order.
 - [ ] Make `./run lint` execute all linter tasks and display useful output
 
 - [ ] Move or delete the `## Development Changes` section in the README doesn't
-      clutter it so much.
+      clutter it so much
+      
+- [ ] Make all links reference and not inline
 
 # DONE
 
