@@ -1,0 +1,78 @@
+<% # This file is a shared partial to render a top-level Algolia item %>
+
+<div class="mt-2 pr-3 text-hackernews-story-gray">
+    <div class="mb-1">
+        <!-- # Story row 1 -->
+        <div class="flex flex-row items-center">
+
+            <div class="size-[10px] mx-2">
+                <% # TODO Create some kind of pop-up that specifies this behavior can't exist %>
+                <a href=<%= root_url %>>
+                    <%= image_tag "triangle.svg" %>
+                </a>
+            </div>
+
+            <div>
+
+                <% # TODO: For the case of Ask HN items, the link should be the item details view %>
+                <a class="text-hackernews-item-gray" href="<%= item.url %>" target="_blank">
+                    <%= item.title %>
+                </a>
+
+                <span class="text-small">
+                    <% # TODO: Make this link go to `/from`, where it lists all posts from that site %>
+                    <a href=<%= root_url %>><%= item.link_domain_name %></a>
+                </span>
+            </div>
+
+        </div>
+
+        <!-- # Itmem row 2 -->
+        <div class="flex flex-row text-xsmall">
+
+            <% # TODO: story.score_string functionality belongs only in front-end. %>
+            <% # TODO: `/user` link %>
+            <% # TODO: Add score_string logic to item_controller, or refactor %>
+            <div class="ml-7">
+                <%= item.score_string %> <%= time_ago_in_words(item.created_at) %> ago
+            </div>
+
+            <div class="mx-1">
+                |
+            </div>
+
+            <% # TODO: Make url hide item and refresh list %>
+            <div class="mr-1">
+                <a href=<%= root_url %>>hide</a>
+            </div>
+
+            <div class="mr-1">
+                |
+            </div>
+
+            <div class="mr-1">
+                <% query = { query: item.title, type: item.type, dateRange: "all", sort: "byDate", storyText: false, prefix: true, page: 0 }.to_query %>
+                <a href=<%= "https://hn.algolia.com/?#{query}" %>>past</a>
+            </div>
+
+            <div class="mr-1">
+                |
+            </div>
+
+            <div class="mr-1">
+                <a href=<%= root_url %>>favorite</a>
+            </div>
+
+            <div class="mr-1">
+                |
+            </div>
+
+
+            <div>
+                <% # TODO: make url direct to item view %>
+                <a href=<%= news_item_path(id: item.id) %>><%= item.comment_string %></a>
+            </div>
+
+        </div>
+    </div>
+</div>

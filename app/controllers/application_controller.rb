@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   TOTAL_PAGES = 16
 
   def get_item_from_id(id) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    item = HackerNews.get(resource: :item, id:)
+    item = HackerNews::Request.new.get(api: :hn, resource: :item, id:)
     Item.new do |i|
       i.hn_id       = item[:data][:id]
       i.deleted     = item[:data][:deleted]
@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
     threads = []
     ids.each_with_index do |id, i|
       threads << Thread.new do
-        item = HackerNews.get(resource: :item, id:)
+        item = HackerNews::Request.new.get(api: :hn, resource: :item, id:)
         items[i] = item
       end
     end

@@ -3,7 +3,8 @@
 Rails.application.routes.draw do
   root to: "news#index"
 
-  get "/news/", to: "news#index", as: :news
+  get "/news/", to: "news#index"
+  get "/news/:id", to: "news#show", as: :news_item
   get "/newest/", to: "new#index", as: :new
   get "/front/", to: "past#index", as: :past
   get "/ask/", to: "ask#index", as: :ask

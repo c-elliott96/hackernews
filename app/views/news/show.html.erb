@@ -1,0 +1,12 @@
+<%= render partial: "shared/nav" %>
+
+<%= render partial: "shared/algolia_show_item", locals: { item: @item } %>
+
+<div class="mt-2 pr-3 text-hackernews-story-gray">
+    <% # render partial: "shared/algolia_comment" %>
+    <% @item.children&.each_with_index do |child, i| %>
+        <% next_item = i < @item.children.length - 1 ? @item.children[i+1] : nil %>
+        <% prev_item = i > 0 ? @item.children[i-1] : nil %>
+        <%= render partial: "shared/algolia_show_items", locals: { item: child, next_item: next_item, prev_item: prev_item } %>
+    <% end %>
+</div>

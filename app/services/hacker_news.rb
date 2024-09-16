@@ -2,79 +2,61 @@
 
 require "httparty"
 
-# Handles HackerNews API (v0) requests, with custom Errors
-#
-# Usage: HackerNews.get(resource: {RESOURCES_SYM}, [id: ID])
-#
-# Returns JSON response as a hash of the form
-# {
-#   code: RESPONSE CODE,
-#   data: HASH OF DATA
-# }
-#
+# HackerNews service module
 module HackerNews
-  class Error < StandardError; end
-  class ArgumentError < Error; end
+  # NOTE: Using algolia requires attention to the number of requests being made.
+  # There is a rate limit of 10,000 requests per hour per IP.
+  # In the future, it may be wise to move the controller logic to the front-end,
+  # so that the limit is applied to the client instead of the server.
 
-  # v0 API uri
-  ::BASE_URI = "https://hacker-news.firebaseio.com/v0"
+  # Handles making requests to a given resource.
+  class Request
+    def get(api:, resource:, **options)
+      # TODO: Validate params/resources for both APIs
+      # unless RESOURCES.key?(resource) && valid_params?(resource, options)
+      #   Rails.logger.tagged("HackerNews#get(:#{resource})") do
+      #     Rails.logger.warn { "Requested resource '/#{resource}' options #{options} invalid." }
+      #   end
+      # end
 
-  # v0 available resources
-  ::RESOURCES = {
-    item: "item",
-    user: "user",
-    maxitem: "maxitem",
-    top_stories: "topstories",
-    new_stories: "newstories",
-    best_stories: "beststories",
-    ask_stories: "askstories",
-    show_stories: "showstories",
-    job_stories: "jobstories"
-  }.freeze
+      url = setup_uri(api, resource, options)
+      Rails.logger.info { "Requesting #{url}" }
+      res = HTTParty.get(url)
 
-  # Makes GET request after validating params. Returns a hash containing the
-  # response :code with hash called :data that contains JSON of the response
-  # body
-  def self.get(resource:, **options) # rubocop:disable Metrics/MethodLength
-    uri = _validate_and_set_uri(resource, options)
-    res = HTTParty.get uri
+      parsed_body = JSON.parse(res.body, { symbolize_names: true })
 
-    # NOTE: requesting an item with an id that doesn't exist, i.e. item.id >
-    # maxitem, still returns a 200 response code. So, until I think of a better
-    # way to handle this scenario, I just warn if the body of the response is
-    # nil.
-    #
-    # Using TaggedLogging here to provide some context, althought it's probably
-    # not necessary.
-    parsed_body = JSON.parse(res.body, { symbolize_names: true })
+      # Normalize response
+      {
+        code: res.code,
+        data: parsed_body
+      }
+    end
 
-    if parsed_body.nil?
-      Rails.logger.tagged("HackerNews#get(:#{resource})") do
-        Rails.logger.warn { "Requested resource :#{resource} appears invalid; response body empty." }
+    private
+
+    # Determines which API we need to set up the URI for.
+    # Might be better to use a hash of available APIs.
+    def setup_uri(api, resource, options)
+      api == :hn ? setup_hn_uri(resource, options) : setup_algolia_uri(resource, options)
+    end
+
+    # Sets up URI for request to HN
+    def setup_hn_uri(resource, options)
+      uri = "#{Constants::BASE_HN_URI}#{Constants::HN_RESOURCES[resource]}/"
+      uri << options[:id].to_s if %i[item user].include? resource
+      uri << ".json"
+    end
+
+    # Sets up URI for request to Algolia
+    def setup_algolia_uri(resource, options)
+      uri = "#{Constants::BASE_ALGOLIA_URI}#{Constants::ALGOLIA_RESOURCES[resource]}"
+      if %i[items users].include?(resource)
+        return uri << "/" << (resource == :items ? options[:id].to_s : options[:username].to_s)
       end
+
+      # query_string = !options.nil? && URI.encode_www_form(options)
+      query_string = !options.nil? && CGI.unescape(options.to_query)
+      %i[search search_by_date query].include?(resource) ? uri << "/?#{query_string}" : uri
     end
-
-    # Normalize response
-    {
-      code: res.code,
-      data: parsed_body
-    }
-  end
-
-  # Validates params passed to .get. Returns uri
-  def self._validate_and_set_uri(resource, options)
-    raise ArgumentError, "Requested resource '/#{resource}' invalid." unless RESOURCES.key? resource
-
-    uri = +"#{BASE_URI}/#{RESOURCES[resource]}"
-    if %i[item user].include? resource
-      raise ArgumentError, "'/#{resource}' requires an :id." unless options.key? :id
-
-      uri << "/#{options[:id]}"
-    end
-
-    # Setting 'Accept: application/json' header does not achieve the same
-    # response as requesting JSON explicitly. I haven't been able to figure out
-    # a better way to do this.
-    uri << ".json"
   end
 end

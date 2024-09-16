@@ -5,13 +5,20 @@
 Here I store the current TODO items for this project. Inspired by
 [TODO.md][todo-md].
 
-## Use `hn.algolia.com` API instead of HackerNews
+## Use `hn.algolia.com` API alongside HackerNews
 
-- [ ] Update `app/services/hacker_news.rb` for requests
-  
-- [ ] Create controller, model, and tests for the appropriately named resource
+We have to use both. The `index` views don't work with Algolia's (the front page
+tag search only returns 30 results, so we need to use HNs API for all the
+results, as far as I can tell). However, the `show` views can use Algolia's API
+for much faster data aquisition.
 
-## Figure out styling issues when rendering comment HTML
+- [x] Update `app/services/hacker_news.rb` for requests
+
+- [ ] Update all the controllers and views
+
+- [ ] Update tests
+
+## Styling issues when rendering comment HTML
 
 Tailwindcss's preflight base styling is interfering with the rendering of the
 HTML we get from HackerNews comments. For example, the `<p>` tags are not
@@ -21,8 +28,172 @@ other solution.
 
 - [ ] Add class that resets preflights, which can be applied to raw HTML
 
-- [ ] If necessary, create wrapper elemenent (div) to style the background and
-      spacing that we lose with focibly overriding preflights
+- [ ] If necessary, create wrapper element (div) to style the background and
+      spacing that we lose with forcibly overriding preflights
+
+## `[-]` (remove element), `hide` functionality
+
+Here is all the JS that HN uses in their pages. It's very simple (and, IMO,
+elegant).
+
+```js
+function $ (id) { return document.getElementById(id); }
+function byClass (el, cl) { return el ? el.getElementsByClassName(cl) : [] }
+function byTag (el, tg) { return el ? el.getElementsByTagName(tg) : [] }
+function allof (cl) { return byClass(document, cl) }
+function classes (el) { return (el && el.className && el.className.split(' ')) || []; }
+function hasClass (el, cl) { return afind(cl, classes(el)) }
+function addClass (el, cl) { if (el) { var a = classes(el); if (!afind(cl, a)) { a.unshift(cl); el.className = a.join(' ')}} }
+function remClass (el, cl) { if (el) { var a = classes(el); arem(a, cl); el.className = a.join(' ') } }
+function uptil (el, f) { if (el) return f(el) ? el : uptil(el.parentNode, f) }
+function upclass (el, cl) { return uptil(el, function (x) { return hasClass(x, cl) }) }
+function html (el) { return el ? el.innerHTML : null; }
+function attr (el, name) { return el.getAttribute(name) }
+function tonum (x) { var n = parseFloat(x); return isNaN(n) ? null : n }
+function remEl (el) { el.parentNode.removeChild(el) }
+function posf (f, a) { for (var i=0; i < a.length; i++) { if (f(a[i])) return i; } return -1; }
+function apos (x, a) { return (typeof x == 'function') ? posf(x,a) : Array.prototype.indexOf.call(a,x) }
+function afind (x, a) { var i = apos(x, a); return (i >= 0) ? a[i] : null; }
+function acut (a, m, n) { return Array.prototype.slice.call(a, m, n) }
+function aeach (fn, a) { return Array.prototype.forEach.call(a, fn) }
+function arem (a, x) { var i = apos(x, a); if (i >= 0) { a.splice(i, 1); } return a; }
+function alast (a) { return a[a.length - 1] }
+function vis (el, on) { if (el) { (on ? remClass : addClass)(el, 'nosee') } }
+function setshow (el, on) { (on ? remClass : addClass)(el, 'noshow') }
+function noshow (el) { setshow(el, false) }
+
+function ind (tr) {
+  var el = byClass(tr, 'ind')[0];
+  return el ? tonum(attr(el, 'indent')) : null;
+}
+
+function vurl (id, how, auth, _goto) {
+  return "vote?id=" + id + "&how=" + how + "&auth=" + auth + "&goto=" + encodeURIComponent(_goto) + "&js=t"
+}
+
+function vote (id, how, auth, _goto) {
+  vis($('up_' + id), how == 'un');
+  vis($('down_' + id), how == 'un');
+  var unv = '';
+  if (how != 'un') {
+    unv = " | <a id='un_" + id + "' class='clicky' " +
+      "href='" + vurl(id, 'un', auth, _goto) + "'>" +
+      (how == 'up' ? 'unvote' : 'undown') + "</a>"
+  }
+  $('unv_' + id).innerHTML = unv;
+  new Image().src = vurl(id, how, auth, _goto);
+}
+
+function nextcomm (el) {
+  while (el = el.nextElementSibling) {
+    if (hasClass(el, 'comtr')) return el;
+  }
+}
+
+function hidekids (tr) {
+  var n = ind(tr);
+  while ((tr = nextcomm(tr)) && ind(tr) > n) {
+    setshow(tr, false);
+  }
+}
+
+function showkids (tr) {
+  var m = ind(tr);
+  while (tr = nextcomm(tr)) {
+    var n = ind(tr);
+    if (n <= m) return;
+    if (n == m + 1) {
+      setshow(tr, true);
+      (hasClass(tr, 'coll') ? hidekids : showkids)(tr);
+    }
+  }
+}
+
+function toggleCollapse (id) {
+  var tr = $(id), coll = !hasClass(tr, 'coll');
+  collstate(tr, coll);
+  (coll ? hidekids : showkids)(tr);
+  if ($('logout')) {
+    new Image().src = 'collapse?id=' + id + (coll ? '' : '&un=true');
+  }
+}
+
+function collstate (tr, coll) {
+  (coll ? addClass : remClass)(tr, 'coll');
+  vis(byClass(tr, 'votelinks')[0], !coll);
+  setshow(byClass(tr, 'comment')[0], !coll);
+  var el = byClass(tr, 'togg')[0];
+  el.innerHTML = coll ? ('[' + attr(el, 'n') + ' more]') : '[–]';
+}
+
+function onop () { return attr(byTag(document,'html')[0],'op') }
+
+function ranknum (el) {
+  var s = html(el) || "";
+  var a = s.match(/[0-9]+/);
+  if (a) {
+    return tonum(a[0]);
+  }
+}
+
+var n1 = ranknum(allof('rank')[0]) || 1;
+
+function newstory (pair) {
+  if (pair) {
+    var sp = alast(allof('spacer'));
+    sp.insertAdjacentHTML('afterend', pair[0] + sp.outerHTML);
+    fixranks();
+    if (onop() == 'newest') {
+      var n = ranknum(alast(allof('rank')));
+      allof('morelink')[0].href = 'newest?next=' + pair[1] + '&n=' + (n + 1);
+    }
+  }
+}
+
+function fixranks () {
+  var rks = allof('rank');
+  aeach(function (rk) { rk.innerHTML = (apos(rk,rks) + n1) + '.' }, rks);
+}
+
+function moreurl () { return allof('morelink')[0].href }
+function morenext () { return tonum(moreurl().split('next=')[1]) }
+
+function hidestory (el, id) {
+  for (var i=0; i < 3; i++) { remEl($(id).nextSibling) }
+  remEl($(id));
+  fixranks();
+  var next = (onop() == 'newest' && morenext()) ? ('&next=' + morenext()) : '';
+  var url = el.href.replace('hide', 'snip-story').replace('goto', 'onop');
+  fetch(url + next).then(r => r.json()).then(newstory);
+}
+
+function onclick (ev) {
+  var el = upclass(ev.target, 'clicky');
+  if (el) {
+    var u = new URL(el.href, location);
+    var p = u.searchParams;
+    if (u.pathname == '/vote') {
+      vote(p.get('id'), p.get('how'), p.get('auth'), p.get('goto'));
+    } else if (u.pathname == '/hide') {
+      hidestory(el, p.get('id'));
+    } else if (hasClass(el, 'togg')) {
+      toggleCollapse(attr(el, 'id'));
+    } else {
+      $(u.hash.substring(1)).scrollIntoView({behavior: "smooth"})
+    }
+    ev.stopPropagation();
+    ev.stopImmediatePropagation();
+    ev.preventDefault();
+    return false;
+  }
+}
+
+document.addEventListener("click", onclick);
+```
+  
+- [ ] Implement `[-]`
+  
+- [ ] Implement `hide`
 
 # BACKLOG
 
@@ -31,6 +202,7 @@ In no particular order.
 - [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date
 
 - [ ] Figure out how to cleanly "rebase" from `docker-rails-example`
+      [Changes](https://github.com/nickjj/docker-rails-example/compare/c2e3a4bec4bf355b1c6882f34dd74eb438035a50...main)
 
 - [ ] Address/remove sporadic in-source TODOs not specified here
 
@@ -40,8 +212,18 @@ In no particular order.
 
 - [ ] Move or delete the `## Development Changes` section in the README doesn't
       clutter it so much
-      
-- [ ] Make all links reference and not inline
+
+- [ ] Make all markdown links reference and not inline
+
+- [ ] Document aspects of my clone that cannot truly mimic news.ycombinator.com
+  
+  - Comment ordering
+  
+  - Upvoting (any actions that require login)
+  
+- [ ] Fix "next" "prev" fragment functionality
+
+- [ ] Fix `news#show` URL
 
 # DONE
 
@@ -50,6 +232,9 @@ In no particular order.
 - [x] Add `./run ruby-lint -A` task
 
 - [x] Add `./run markdownlint` task
+
+- [x] Many things I've done without first creating a task, and then forgetting
+      about.
 
 <!-- Links -->
 [todo-md]: https://github.com/todo-md/todo-md
