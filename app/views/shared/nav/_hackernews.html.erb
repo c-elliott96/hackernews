@@ -1,0 +1,5 @@
+<% classes =  { class: "font-bold mr-1" } %>
+<% content = capture do %>
+    <a href="<%= news_path %>">Hacker News</a>
+<% end %>
+<%= render partial: "shared/util/div", locals: { classes: classes, content: content } %>

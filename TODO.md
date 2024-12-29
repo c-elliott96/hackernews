@@ -14,9 +14,23 @@ for much faster data aquisition.
 
 - [x] Update `app/services/hacker_news.rb` for requests
 
+- [ ] Make HackerNews a global service object
+
 - [ ] Update all the controllers and views
 
 - [ ] Update tests
+
+## Footer
+
+- [ ] Decide what I'm going to put there (mimic HN's footer or make my own
+      cutsie one?)
+
+## Past
+
+- [ ] Display dymanic date in the nav
+
+- [ ] Display dynamic date information and sub-navigation items at the top of
+      the index view.
 
 ## Styling issues when rendering comment HTML
 
@@ -30,13 +44,15 @@ other solution.
 
 - [ ] If necessary, create wrapper element (div) to style the background and
       spacing that we lose with forcibly overriding preflights
+      
+- [ ] Fix `add comment` button styling
 
 ## `[-]` (remove element), `hide` functionality
 
 Here is all the JS that HN uses in their pages. It's very simple (and, IMO,
 elegant).
 
-```js
+```javascript
 function $ (id) { return document.getElementById(id); }
 function byClass (el, cl) { return el ? el.getElementsByClassName(cl) : [] }
 function byTag (el, tg) { return el ? el.getElementsByTagName(tg) : [] }
@@ -200,6 +216,9 @@ document.addEventListener("click", onclick);
 In no particular order.
 
 - [ ] Add some kind of CVE/deprecation scanner to keep dependencies up to date
+
+- [ ] Make configurable URL whitelist for `github.com/c-elliott96`-style story
+      URL parentheticals. Github, twitter, medium, ...?
 
 - [ ] Figure out how to cleanly "rebase" from `docker-rails-example`
       [Changes](https://github.com/nickjj/docker-rails-example/compare/c2e3a4bec4bf355b1c6882f34dd74eb438035a50...main)

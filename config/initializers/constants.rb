@@ -24,4 +24,9 @@ module Constants
     search_by_date: "search_by_date",
     query: ""
   }.freeze
+
+  NAV_ITEM_NAMES = %w[new past comments ask show jobs submit].freeze
+
+  MAX_ITEMS_PER_PAGE = 30 # The max number of items we display per page
+  MAX_PAGES_OF_ITEMS = 16 # The max number of pages of items for /, /news, etc.
 end

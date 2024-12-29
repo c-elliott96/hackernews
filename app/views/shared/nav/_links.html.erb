@@ -1,0 +1,7 @@
+<% Constants::NAV_ITEM_NAMES.each do |name| %>
+    <%= render partial: "shared/nav/link",
+               locals: { controller_name: name } %>
+    <% unless name == "submit" %>
+        <div>|</div>
+    <% end %>
+<% end %>

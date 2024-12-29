@@ -26,6 +26,7 @@ class AlgoliaItem
     :link_domain_name,
     :rank,
     :score_string,
-    :comment_string
+    :comment_string,
+    :num_comments
   )
 end

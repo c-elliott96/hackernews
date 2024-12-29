@@ -47,6 +47,127 @@ First, you should have Docker installed.
 3. Setup the database
 
    `./run rails db:prepare`
+   
+## Design
+
+### "News" (default)
+
+`/` (root -- by clicking the HackerNews icon) goes to `news#index`. So does
+`news/` (clicking the HackerNews title in the nav). This controller makes a HN
+API request to get 30 posts from a given slice of `:top_stories` (the slice is
+determined by the `params[:p]` value) and sets up the model. This displays the
+view of the same name. This view, `views/news/index.html.erb`, displays three
+partials: `shared/nav`, `shared/hn_index_items`, and `shared/footer`.
+
+The `shared/nav` partial utilizes several other partials from `shared/util` and
+`shared/nav/`. The way the main `nav` partial works is it renders the links and
+colorizes the link that corresponds to the controller that has been called to
+render this partial. This approach probably isn't ideal, but does save from
+having a bunch of conditionals in the partial and allows me to keep the shared
+partials pretty small. If I condense my controllers in the future, I will need
+to refactor the way this `nav` setup works.
+
+Clicking the comments link in a particular item in the index view links to
+`/item?id=xxxxxxx`, which routes to `news#show`. This renders the partials
+`shared/nav`, `shared/algolia_show_item` (with the clicked item passed as a
+local variable), and finally `shared/algolia_show_items`, which calls itself
+recursively to display the comment tree (themselves items). The
+`algolia_show_items` partial is called in a `each_with_index` block, iterating
+over the children items of the top-level item -- the item that was clicked on
+from the index view. The `algolia_show_items` partial expects three local
+variables: `item` (which is set to the child passed to the block), `next_item`,
+and `prev_item`.
+
+### "New"
+
+`/newest` ("new" in the nav bar) is routed to `new#index`. This controller makes
+a HN API request to get 30 posts from a given slice of `:new_stories`, and sets
+up the model. It renders the `new/index` view. This view renders three partials:
+`shared/nav`, `shared/hn_index_items`, and `shared/footer`, which are identical
+to the aforementioned "News" partials.
+
+### "Past"
+
+Note: param for this controller is `params[:day]`.
+
+`/front` ("past" in the nav bar) is routed to `past#index`. This controller
+makes a request to Algolia's `search_by_date` API endpoint. This endpoint
+returns search results (requested via query params that conform to the
+[API](https://hn.algolia.com/api)'s accepted paremeters), which returns filtered
+results sorted by date (most recent first). The API allows users to pass helpful
+parameters to manage result pagination, like `hitsPerPage` and `page`, which
+allows us to request the standard 30 results per page. This makes paginating
+results in the front-end very straightforward. To receive the proper set of
+stories for a given date selection, we can pass query params to filter based on
+`created_at_i`, which is an integer representing the story's creation date in
+Unix time. Therefore, we can filter with something like
+
+``` ruby
+opts = {
+  tags: :story,
+  numericFilters: "created_at_i>#{created_at_i},created_at_i<#{ends_at_i}",
+  hitsPerPage: 30,
+  page: @page
+}
+```
+
+We can then set up the response as a regular model for consumption in the view.
+
+Note: currently, we define two separate models for the same "kind" of item data
+returned from the HackerNews API and the Algolia APIs respectively: `Item` and
+`AlgoliaItem`. This approach is not ideal and one of the things I would like to
+do is create a single model that handles both data structures at the model
+layer, so that our views do not need to differentiate between the two in thier
+logic.
+
+This controller then renders the `past/index` view, which in turn renders the
+three partials `shared/nav`, `shared/algolia_index_items`, and `shared/footer`.
+(Another note: I can probably move the nav and the footer partials to the
+application layout, and just explicitly render a different layout for one-off
+application views that don't display these components.) The
+`algolia_index_items` partial, like the `hn_index_items` partial, expects a
+local `items` to be provided.
+
+The second row of the item in the index displays only the "score string" (e.g.
+`783 points by username`), the time ago string, and then a pipe, and finally the
+`n comments` link (or, ostensibly, the `discuss` link).
+
+The date is displayed dynamically in the nav bar (e.g. `2024-09-28`) and there
+are control options displayed at the top of the index as follows:
+
+``` text
+Stories from September 28, 2024 (UTC)
+
+Go back a _day_, _month_, or _year_. Go forward a _day_.
+```
+
+### "Comments"
+
+`/newcomments` ("comments" in the nav bar) is routed to `comments#index`.
+
+This view displays an index of 30 comments. This should be captured by hitting
+the Algolia `search_by_date` endpoint, where we filter by the item type
+`comment`.
+
+An individual comment is displayed with the following format (gray first line,
+small):
+
+``` text
+[triangle] [time ago link] | [parent] | [context] | on: [title of comment's parent story]
+
+[comment body in black]
+```
+
+Hitting the "More" link in the bottom sets a query param `next=item_id`...
+
+#### Places where my application differs from news.ycombinator.com
+
+- For unknown reasons, the "More" link at the bottom of an item index is
+  displayed in gray on some pages and black on others. Instead of keeping
+  aligned with this, I'm going to just keep all of mine gray.
+  
+- When logged in to HackerNews, a navigation item called "Threads" appears. My
+  application can't support logging in, so this item won't appear.
 
 ## TODOs
 

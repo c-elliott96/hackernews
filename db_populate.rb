@@ -31,6 +31,8 @@ item_id = HackerNews.get(resource: :maxitem)[:data]&.to_i
   item_id -= 1
 end
 
+p "hello"
+
 # Trial run of 1000 row entries worked, it seems.
 # Size of hackernews_development database: ~ 8,500,000B
 

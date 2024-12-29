@@ -3,12 +3,27 @@
 Rails.application.routes.draw do
   root to: "news#index"
 
+  # The action that runs when you select an item
+  get "/item/", to: "news#show", as: :show_item
+
   get "/news/", to: "news#index"
-  get "/news/:id", to: "news#show", as: :news_item
+
   get "/newest/", to: "new#index", as: :new
+
   get "/front/", to: "past#index", as: :past
+
+  get "/newcomments/", to: "comments#index", as: :comments
+
   get "/ask/", to: "ask#index", as: :ask
-  get "/item/", to: "item#index", as: :item
+
+  get "/show/", to: "show#index", as: :show
+  # get "/show/:id", to: "show#show", as: :show_item
+
+  get "/jobs/", to: "jobs#index", as: :jobs
+
+  # Render generic "not implementable" page
+  get "/submit/", to: "submit#index", as: :submit
+
   get "/up/", to: "up#index", as: :up
   get "/up/databases", to: "up#databases", as: :up_databases
 

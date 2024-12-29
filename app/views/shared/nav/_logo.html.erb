@@ -1,0 +1,7 @@
+<% classes =  { class: "size-[20px] m-[2px] flex items-center justify-center border-solid border-[1px] border-white" } %>
+<% content = capture do %>
+    <a href="<%= root_path %>">
+        <%= image_tag "y18.svg" %>
+    </a>
+<% end %>
+<%= render partial: "shared/util/div", locals: { classes: classes, content: content } %>

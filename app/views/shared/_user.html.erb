@@ -1,0 +1,15 @@
+<% # user:
+   # created:
+   # karma:
+   # about:
+   #   submissions
+   #   comments
+   #   favorites
+%>
+
+<div class="flex flex-col mt-1 text-hn-gray">
+    <div class="flex flex-row"><%= "user: #{user.hn_id}%></div>
+    <div class="flex flex-row"><%= "created: " %><span class="text-black"><%= time_ago_in_words(user.created) %></span></div>
+    <div class="flex flex-row"><%= "karma: #{user.karma}" %></div>
+    <div class="flex flex-row"><%= "about: #{user&.about}" %></div>
+</div>

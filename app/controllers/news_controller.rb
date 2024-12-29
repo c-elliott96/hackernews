@@ -20,7 +20,6 @@ class NewsController < ApplicationController
     @num_comments = 0
     tally_comments(item[:children])
     @item = setup_item(item)
-    p @num_comments
     # Need to parse out important fields from Algolia items data
   end
 
@@ -79,7 +78,7 @@ class NewsController < ApplicationController
   end
 
   def set_item_rank_link_score(item, idx)
-    item.rank = (@page - 1) * ITEMS_PER_PAGE + idx + 1
+    item.rank = (@page - 1) * Constants::MAX_ITEMS_PER_PAGE + idx + 1
     # TODO: Make this go to the #from?site=... action like HN
     item.link_domain_name = url_domain(item.url)
     item.score_string = score_string(item.score, item.by)

@@ -42,7 +42,8 @@ module HackerNews
 
     # Sets up URI for request to HN
     def setup_hn_uri(resource, options)
-      uri = "#{Constants::BASE_HN_URI}#{Constants::HN_RESOURCES[resource]}/"
+      uri = "#{Constants::BASE_HN_URI}#{Constants::HN_RESOURCES[resource]}"
+      uri << "/" unless options.empty?
       uri << options[:id].to_s if %i[item user].include? resource
       uri << ".json"
     end
@@ -56,7 +57,7 @@ module HackerNews
 
       # query_string = !options.nil? && URI.encode_www_form(options)
       query_string = !options.nil? && CGI.unescape(options.to_query)
-      %i[search search_by_date query].include?(resource) ? uri << "/?#{query_string}" : uri
+      %i[search search_by_date query].include?(resource) ? uri << "?#{query_string}" : uri
     end
   end
 end

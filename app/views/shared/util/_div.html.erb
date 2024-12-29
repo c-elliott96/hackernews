@@ -1,0 +1,5 @@
+<% # Renders a div with the given content and HTML attributes %>
+<% # Locals: { classes: A hash of attributes to render , content: nil } %>
+<div <%= classes ? tag.attributes(classes) : nil %> >
+    <%= content %>
+</div>

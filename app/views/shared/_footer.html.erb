@@ -1,0 +1,18 @@
+<hr class="bg-hackernews-orange h-[2px] my-2 border-0">
+<div class="flex flex-row mt-2 justify-center text-small">
+    Guidelines | Test | Another
+</div>
+<!-- <div class="flex justify-center my-2 text-hackernews-story-gray">
+     Search:
+     </div> -->
+<div class="flex justify-center items-center h-[24px] my-2 text-hackernews-story-gray">
+    <% text_field_classes = "border rounded-sm text-black pl-[3px]
+outline-0 border-hackernews-story-gray focus:border-blue-500
+focus:rounded-sm focus:border-2 w-36 ring-offset-1 focus:outline-none focus:ring-blue-200
+ focus:ring-2" %>
+    <% algolia_url = "https://hn.algolia.com/?" %>
+    <%= form_with url: algolia_url, method: :get do |form| %>
+        <%= form.label :q, "Search:" %>
+        <%= form.text_field :q, class: text_field_classes %>
+    <% end %>
+</div>

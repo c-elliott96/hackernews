@@ -1,4 +1,3 @@
-<% # Renders a list of items for an #index view %>
 <div class="mt-2 pr-3 text-hackernews-story-gray">
     <% items&.each do |item| %>
         <div class="mb-1">
@@ -10,25 +9,16 @@
                     <div class="w-6 text-right"><%= item.rank %>.</div>
                 <% end %>
 
-                <% # TODO Refactor this as well %>
-                <% if defined?(is_story_view) %>
-                    <div class="size-[10px] mx-2">
-                        <a href=<%= root_url %>>
-                            <%= image_tag "triangle.svg" %>
-                        </a>
-                    </div>
-                <% else %>
-                    <div class="size-[10px] mx-0.5">
-                        <a href=<%= root_url %>>
-                            <%= image_tag "triangle.svg" %>
-                        </a>
-                    </div>
-                <% end %>
+                <div class="size-[10px] mx-0.5">
+                    <a href=<%= root_url %>>
+                        <%= image_tag "triangle.svg" %>
+                    </a>
+                </div>
 
                 <div>
 
                     <% # TODO: For the case of Ask HN items, the link should be the item details view %>
-                    <a class="text-black mr-1" href="<%= item.url %>" target="_blank">
+                    <a class="text-black" href="<%= item.url %>" target="_blank">
                         <%= item.title %>
                     </a>
 
@@ -46,15 +36,9 @@
                 <% # TODO: story.score_string functionality belongs only in front-end. %>
                 <% # TODO: `/user` link %>
                 <% # TODO: Add score_string logic to item_controller, or refactor %>
-                <% if defined?(is_story_view) %>
-                    <div class="ml-7">
-                    <%= item.score_string %> <%= time_ago_in_words(item.time) %> ago
-                    </div>
-                <% else %>
-                    <div class="ml-10">
-                    <%= item.score_string %> <%= time_ago_in_words(item.time) %> ago
-                    </div>
-                <% end %>
+                <div class="ml-10">
+                <%= item.score_string %> <%= time_ago_in_words(item.time) %> ago
+                </div>
 
                 <div class="mx-1">
                     |
@@ -71,7 +55,7 @@
 
                 <div>
                     <% # TODO: make url direct to item view %>
-                    <% if item.descendants.is_a?(Integer) && item.descendants > 0 %>
+                    <% if item.descendants && item.descendants > 0 %>
                         <a href=<%= show_item_path({ id: item.hn_id }) %>><%= item.descendants %> <%= item.descendants == 1 ? "comment" : "comments" %></a>
                     <% else %>
                         <a href=<%= show_item_path({ id: item.hn_id }) %>>discuss</a>
@@ -84,9 +68,8 @@
 
     <% # TODO refactor so this workaround isn't necessary %>
     <% if @page != nil %>
-        <div class="ml-10 mt-1 text-black">
+        <div class="ml-10 mt-3 text-hackernews-story-gray">
             <%= button_to "More", { action: "index" }, { method: :get, params: { p: @page + 1 } } %>
         </div>
     <% end %>
 </div>
-

@@ -3,8 +3,14 @@
 # Base application controller. All other controllers typically extend
 # ApplicationController.
 class ApplicationController < ActionController::Base
-  # /topstories, /newstores, /beststories give us 500 stories. We display 30
-  # stories per page.
+  # For all of the controller "show" actions, we will use the Algolia API. This
+  # is because the Algolia "/items" resource returns all of the child items at
+  # once. For the case of the "index" actions, the we have to use the HackerNews
+  # API for all but two view types: the "past" view and the "comments" view,
+  # which need to make use of Algolia's "/search_by_date" resource.
+  #
+  # /topstories, /newstores, /beststories give us 500 stories. We display
+  # 30 stories per page.
   ITEMS_PER_PAGE = 30
   TOTAL_PAGES = 16
 
@@ -82,7 +88,7 @@ class ApplicationController < ActionController::Base
   end
 
   def invalid_param_p?(param_p)
-    param_p.nil? || param_p.empty? || (param_p.to_i > TOTAL_PAGES || param_p.to_i < 1)
+    param_p.nil? || param_p.empty? || (param_p.to_i > Constants::MAX_PAGES_OF_ITEMS || param_p.to_i < 1)
   end
 
   def page_range

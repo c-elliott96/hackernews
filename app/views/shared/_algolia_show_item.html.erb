@@ -2,7 +2,7 @@
 
 <div class="mt-2 pr-3 text-hackernews-story-gray">
     <div class="mb-1">
-        <!-- # Story row 1 -->
+        <% # Item row 1 %>
         <div class="flex flex-row items-center">
 
             <div class="size-[10px] mx-2">
@@ -27,7 +27,7 @@
 
         </div>
 
-        <!-- # Itmem row 2 -->
+        <% # Item row 2 %>
         <div class="flex flex-row text-xsmall">
 
             <% # TODO: story.score_string functionality belongs only in front-end. %>
@@ -70,9 +70,14 @@
 
             <div>
                 <% # TODO: make url direct to item view %>
-                <a href=<%= news_item_path(id: item.id) %>><%= item.comment_string %></a>
+                <a href=<%= show_item_path(id: item.id) %>><%= item.comment_string %></a>
             </div>
 
         </div>
+
+        <% # Disabled textarea %>
+        <textarea class="border rounded border-hackernews-story-gray ml-7 my-4 w-4/6" name="text" rows="8" cols="80" wrap="virtual" disabled></textarea>
+        <% button_classes = "border rounded border-hackernews-story-gray ml-7 px-1 text-black" %>
+        <%= button_to "add comment", false, { disabled: true, class: button_classes } %>
     </div>
 </div>

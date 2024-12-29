@@ -1,0 +1,8 @@
+<% # locals: { controller_name, display_name: nil } %>
+<% classes =  { class: "text-white" } if current_page?(controller: "#{controller_name}", action: "index" ) %>
+<% content = capture do %>
+    <a href=<%= send("#{controller_name}_path") %>>
+        <%= local_assigns[:display_name] || controller_name %>
+    </a>
+<% end %>
+<%= render partial: "shared/util/div", locals: { classes: classes, content: content } %>
