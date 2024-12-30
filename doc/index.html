@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'><h1 id="hackernews">hackernews</h1>
+
+<p><a href="https://news.ycombinator.com/">Hackernews</a> by Y Combinator, my way.</p>
+
+<p>Leverages the <a href="https://github.com/HackerNews/API">HackerNews API</a>, and is
+bootstrapped via the
+<a href="https://github.com/nickjj/docker-rails-example/tree/main">docker-rails-example</a>
+project by <a href="https://nickjanetakis.com/">Nick Janetakis</a>. Please check out their
+awesome work.</p>
+
+<p>For details on the project’s base Rails and Docker configurations, see the
+<a href="https://github.com/nickjj/docker-rails-example/blob/c2e3a4bec4bf355b1c6882f34dd74eb438035a50/README.md"><code>docker-rails-example/README</code></a>.</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>Here are some steps necessary for running this project on a new device.</p>
+
+<p>First, you should have Docker installed.</p>
+
+<h3 id="prepare-the-environment">Prepare the environment</h3>
+
+<ol>
+  <li>
+    <p>Set up the environment variables in <code>.env</code></p>
+
+    <ol>
+      <li>
+        <p><code>cp .env.example .env</code></p>
+      </li>
+      <li>
+        <p>Edit <code>.env</code> with the following changes:</p>
+      </li>
+    </ol>
+
+    <p><code>diff
+55c55
+&lt; export POSTGRES_USER=hello
+---
+&gt; export POSTGRES_USER=hackernews
+57,59c57,59
+&lt; #export POSTGRES_DB=hello
+&lt; #export POSTGRES_HOST=postgres
+&lt; #export POSTGRES_PORT=5432
+---
+&gt; export POSTGRES_DB=hackernews
+&gt; export POSTGRES_HOST=postgres
+&gt; export POSTGRES_PORT=5432
+</code></p>
+  </li>
+  <li>
+    <p>Build the image and run it</p>
+
+    <p><code>docker compose build &amp;&amp; docker compose run -d</code></p>
+  </li>
+  <li>
+    <p>Setup the database</p>
+
+    <p><code>./run rails db:prepare</code></p>
+  </li>
+</ol>
+
+<h2 id="design">Design</h2>
+
+<h3 id="news-default">“News” (default)</h3>
+
+<p><code>/</code> (root – by clicking the HackerNews icon) goes to <code>news#index</code>. So does
+<code>news/</code> (clicking the HackerNews title in the nav). This controller makes a HN
+API request to get 30 posts from a given slice of <code>:top_stories</code> (the slice is
+determined by the <code>params[:p]</code> value) and sets up the model. This displays the
+view of the same name. This view, <code>views/news/index.html.erb</code>, displays three
+partials: <code>shared/nav</code>, <code>shared/hn_index_items</code>, and <code>shared/footer</code>.</p>
+
+<p>The <code>shared/nav</code> partial utilizes several other partials from <code>shared/util</code> and
+<code>shared/nav/</code>. The way the main <code>nav</code> partial works is it renders the links and
+colorizes the link that corresponds to the controller that has been called to
+render this partial. This approach probably isn’t ideal, but does save from
+having a bunch of conditionals in the partial and allows me to keep the shared
+partials pretty small. If I condense my controllers in the future, I will need
+to refactor the way this <code>nav</code> setup works.</p>
+
+<p>Clicking the comments link in a particular item in the index view links to
+<code>/item?id=xxxxxxx</code>, which routes to <code>news#show</code>. This renders the partials
+<code>shared/nav</code>, <code>shared/algolia_show_item</code> (with the clicked item passed as a
+local variable), and finally <code>shared/algolia_show_items</code>, which calls itself
+recursively to display the comment tree (themselves items). The
+<code>algolia_show_items</code> partial is called in a <code>each_with_index</code> block, iterating
+over the children items of the top-level item – the item that was clicked on
+from the index view. The <code>algolia_show_items</code> partial expects three local
+variables: <code>item</code> (which is set to the child passed to the block), <code>next_item</code>,
+and <code>prev_item</code>.</p>
+
+<h3 id="new">“New”</h3>
+
+<p><code>/newest</code> (“new” in the nav bar) is routed to <code>new#index</code>. This controller makes
+a HN API request to get 30 posts from a given slice of <code>:new_stories</code>, and sets
+up the model. It renders the <code>new/index</code> view. This view renders three partials:
+<code>shared/nav</code>, <code>shared/hn_index_items</code>, and <code>shared/footer</code>, which are identical
+to the aforementioned “News” partials.</p>
+
+<h3 id="past">“Past”</h3>
+
+<p>Note: param for this controller is <code>params[:day]</code>.</p>
+
+<p><code>/front</code> (“past” in the nav bar) is routed to <code>past#index</code>. This controller
+makes a request to Algolia’s <code>search_by_date</code> API endpoint. This endpoint
+returns search results (requested via query params that conform to the
+<a href="https://hn.algolia.com/api">API</a>’s accepted paremeters), which returns filtered
+results sorted by date (most recent first). The API allows users to pass helpful
+parameters to manage result pagination, like <code>hitsPerPage</code> and <code>page</code>, which
+allows us to request the standard 30 results per page. This makes paginating
+results in the front-end very straightforward. To receive the proper set of
+stories for a given date selection, we can pass query params to filter based on
+<code>created_at_i</code>, which is an integer representing the story’s creation date in
+Unix time. Therefore, we can filter with something like</p>
+
+<p><code>ruby
+opts = {
+  tags: :story,
+  numericFilters: "created_at_i&gt;#{created_at_i},created_at_i&lt;#{ends_at_i}",
+  hitsPerPage: 30,
+  page: @page
+}
+</code></p>
+
+<p>We can then set up the response as a regular model for consumption in the view.</p>
+
+<p>Note: currently, we define two separate models for the same “kind” of item data
+returned from the HackerNews API and the Algolia APIs respectively: <code>Item</code> and
+<code>AlgoliaItem</code>. This approach is not ideal and one of the things I would like to
+do is create a single model that handles both data structures at the model
+layer, so that our views do not need to differentiate between the two in thier
+logic.</p>
+
+<p>This controller then renders the <code>past/index</code> view, which in turn renders the
+three partials <code>shared/nav</code>, <code>shared/algolia_index_items</code>, and <code>shared/footer</code>.
+(Another note: I can probably move the nav and the footer partials to the
+application layout, and just explicitly render a different layout for one-off
+application views that don’t display these components.) The
+<code>algolia_index_items</code> partial, like the <code>hn_index_items</code> partial, expects a
+local <code>items</code> to be provided.</p>
+
+<p>The second row of the item in the index displays only the “score string” (e.g.
+<code>783 points by username</code>), the time ago string, and then a pipe, and finally the
+<code>n comments</code> link (or, ostensibly, the <code>discuss</code> link).</p>
+
+<p>The date is displayed dynamically in the nav bar (e.g. <code>2024-09-28</code>) and there
+are control options displayed at the top of the index as follows:</p>
+
+<p>``` text
+Stories from September 28, 2024 (UTC)</p>
+
+<p>Go back a <em>day</em>, <em>month</em>, or <em>year</em>. Go forward a <em>day</em>.
+```</p>
+
+<h3 id="comments">“Comments”</h3>
+
+<p><code>/newcomments</code> (“comments” in the nav bar) is routed to <code>comments#index</code>.</p>
+
+<p>This view displays an index of 30 comments. This should be captured by hitting
+the Algolia <code>search_by_date</code> endpoint, where we filter by the item type
+<code>comment</code>.</p>
+
+<p>An individual comment is displayed with the following format (gray first line,
+small):</p>
+
+<p>``` text
+[triangle] [time ago link] | [parent] | [context] | on: [title of comment’s parent story]</p>
+
+<p>[comment body in black]
+```</p>
+
+<p>Hitting the “More” link in the bottom sets a query param <code>next=item_id</code>…</p>
+
+<h4 id="places-where-my-application-differs-from-newsycombinatorcom">Places where my application differs from news.ycombinator.com</h4>
+
+<ul>
+  <li>
+    <p>For unknown reasons, the “More” link at the bottom of an item index is
+displayed in gray on some pages and black on others. Instead of keeping
+aligned with this, I’m going to just keep all of mine gray.</p>
+  </li>
+  <li>
+    <p>When logged in to HackerNews, a navigation item called “Threads” appears. My
+application can’t support logging in, so this item won’t appear.</p>
+  </li>
+</ul>
+
+<h2 id="todos">TODOs</h2>
+
+<p>See the project’s ongoing list of TODOs in <a href="TODO.md">TODO.md</a></p>
+
+<h2 id="development-changes">Development Changes</h2>
+
+<p>Note: This subsection should be replaced by the CHANGELOG when I release an
+initial version.</p>
+
+<ul>
+  <li>
+    <p>[2024-05-29]</p>
+
+    <p>I added a log WARN message to HackerNews.get if we attempt to access a
+resource that returns <code>nil</code> for the response body. This shouldn’t happen, but
+it seems like I can’t rely on the response code because even bad item IDs
+result in a <code>res.code</code> of 200.</p>
+
+    <p>I also started work on adding a temporary utility script that I’ll use to
+populate the DB with a small subset of items, to try to get a feel for how
+much data the whole HN dump will consume.
+<a href="https://news.ycombinator.com/item?id=38861301">This</a> post seems to indicate
+that the dataset should be ~5-6GB.</p>
+  </li>
+  <li>
+    <p>[2024-06-23 Sun] – [2024-06-25 Tue]</p>
+
+    <p>I’ve decided not to worry about the database stuff yet. I’ve spent too much
+time trying to figure out how best to do that, and too little developing. For
+now, let’s just make a fresh request for every new resource we need. Later we
+can adding caching/DB support to improve things. I’ll leave the DB setup as
+is, unused.</p>
+
+    <p>Adding code like the following improved response times considerably:</p>
+
+    <p><code>ruby
+items = []
+threads = []
+ids.each_with_index do |id, i|
+  threads &lt;&lt; Thread.new do
+    item = HackerNews.get(resource: :item, id:)
+    items[i] = item
+  end
+end
+threads.each(&amp;:join)
+</code></p>
+
+    <p>Where we went from getting story details for 30 items in about 5-7 seconds to
+doing so in about 0.5 - 2 seconds. Adding threads for these requests was a
+good choice, it seems. I did attempt to take things a step further in that I
+wrote some code to first check if the requested item exists in the local
+database (and just return that), and otherwise we can make the request and
+then SAVE the item to the DB (whereby passively populating our own database).
+However, doing so in the same async manner caused my code to create a large
+number of DB actions at once (since initially there are no items in the DB),
+overwhelming the thread pool for the database. A solution to this immediate
+issue is to increase the pool configuration number. However, I’m not sure if
+that’s sufficient. With many concurrent users, this could crash things. I will
+either need to create some kind of protection layer around this, or abandon
+this idea for now. The latter is what I’m going with for the time being, as I
+would like to come back to DB/cache optimization after I get a v0 application
+completed.</p>
+  </li>
+  <li>
+    <p>[2024-06-26 Wed]</p>
+
+    <p>I added the story rank functionality. Now, stories in <code>/news</code> display the
+story’s rank from HackerNews’ <code>/topstories</code> resource.</p>
+
+    <p>I also added the <code>More</code> button to load the next set of stories. This works by
+incrementing the <code>p</code> query param and making a <code>get</code> request to <code>/news</code>. A
+caveat: the resource we rely on only returns the top 500 stories. Page 16 of
+this list (in ranges of 30) ends at 480, so loading page 17 would attempt to
+load 481 - 510. I should add logic to the controller to truncate the results
+if we’re at the end.</p>
+  </li>
+  <li>
+    <p>[2024-06-28 Fri]</p>
+
+    <p>I added the ability to view the secondary and top-level domain in parenthesis,
+like is done on HackerNews. However, it is currently just informational. On
+the actual website, it appears that this text is a hyperlink to a resource
+called <code>/from?site=...</code>, where the user is then directed to a list of all
+posts that reference that particular domain. I will need to figure out if
+doing this is possible and easy-enough.</p>
+
+    <p>I also added the first piece of the secondary row of information about a
+particular story: the points, user, and story age description (e.g. <code>66 points
+by todsacerdoti 4 months ago</code>).</p>
+
+    <p>I still need to implement the <code>hide</code> link, which apparently makes a request to
+<code>/hide</code> which I <em>think</em> is an alias for <code>/snip-story</code>?</p>
+
+    <p><code>text
+Request URL:
+  https://news.ycombinator.com/snip-story?id=40817430&amp;auth=106a51f53142f01a93cadd9014febd833fb21d51&amp;onop=news
+Request Method:
+  GET
+Status Code:
+  200 OK
+</code></p>
+  </li>
+  <li>
+    <p>[2024-07-13 Sat]</p>
+
+    <p>Work on <code>/news</code> view. Mostly styling work. Lots of tailwind trial and error.</p>
+  </li>
+  <li>
+    <p>[2024-07-14 Sun]</p>
+
+    <p>Work on <code>/new</code> (renamed the url resource to “/newest”, to reflect HN).
+Refactored to allow use of <code>items</code> partial for rendering a list of stories.
+Some other styling touch-ups.</p>
+
+    <p>Start work on <code>/from</code>, which is reached by clicking the <code>past</code> link in the nav
+menu. Need to figure out how to create that list of stories.</p>
+  </li>
+  <li>
+    <p>[2024-08-21 Wed]</p>
+
+    <p>I’ve added a lot in this round of code changes. Too much to really document
+without spending a lot of time doing so. Iirc, most of the changes were
+related to getting some kind of views for all the navigation headers, and then
+a lot went into figuring out how to create the comment hierarchy for a given
+story.</p>
+
+    <p>Something I’ve noticed is that when I render the HTML given to us by HN API
+for a comment Item, Tailwindcss is styling the HTML elements we render with
+the preflight configs. This breaks the styling in a variety of ways.
+Unfortunately, we still want the styling we’ve manually applied, but not the
+preflights. I haven’t found an easy way to remedy this, so this item should be
+a TODO for down the line.</p>
+
+    <p>Another issue is load times for large (&gt; ~ 30 total) comment trees is pretty
+abysmal. This is due to the fact that I am making a new request for each level
+in a hierarchy. We are still taking advantage of threading all the “kids” of a
+particular item (using <code>ApplicationController::get_items_from_ids</code>), but each
+level of comments still has to wait on the previous. For large comment trees,
+this is <em>slow</em>. Without using a database, I am not sure how resolve this
+issue.</p>
+
+    <p>I have a massive amount of <code># TODO</code> comments in the code. Eventually I’ll need
+to address them. I also need to refactor a <em>lot</em>. For example, I’ve made it so
+the <code>views/shared/_items</code> partial has a ton of <code>if</code> blocks to determine small
+styling details based on whether it’s rendered in the main list of Items or a
+detail view of an item (with comments).</p>
+  </li>
+  <li>
+    <p>[2024-09-12]</p>
+
+    <p>I have made a lot of updates to this application, and have in some ways gotten
+nowhere. I had things in an ok state, using the HN API and just loading each
+story/comments by making a lot of network requests. Then, I got a new laptop
+with a good amount of free space, so I explored supporting a passively
+populated DB. Subsequently, I realized there was no way to get newly added
+comments to a story without re-requesting all of the children items in the
+Item’s list (the HN API provides no way to find updated items, without
+constantly monitoring an opaque <code>/updates</code> endpoint). Doing so would render DB
+usage kind of pointless, as there would be no performance gain from only
+having to query the local DB as opposed to making new network requests.
+Moreover, I spent some time refactoring the primary controller
+(<code>ItemsController</code>) and related views in a more Rails-conventional manner. All
+of these changes currently exist in the now-abandoned
+<a href="https://github.com/c-elliott96/hackernews/tree/consolidate_controllers"><code>consolidate_controllers</code></a>
+branch, for reference. I am introducing <em>this</em> update in the new
+<code>use-algolia-api</code> branch. I should be able to use the changes to views and
+controllers as a good reference, after I update the <code>hacker_news</code> service
+module to target the Algolia API instead. Finally, I’ll need to rip out the
+database configurations in both Rails and the Docker set up, as it is not
+necessary and wouldn’t be worth while to keep around. I can easily enough add
+it later if I want to.</p>
+
+    <p>I have also moved my TODOs to <a href="TODO.md">TODO.md</a>, to clean up this file. In
+doing so, I’ve been able to clean up the TODOs themselves.</p>
+  </li>
+</ul>
+
+<hr />
+
+<p>I am using <a href="https://github.github.com/gfm/">GFM</a> as the markdown specification
+for this document. I do also format dates in here similarly to inactive
+timestamps in Emacs’ org-mode.</p>
+
+<!-- References -->
+</div></div>
+
+      <div id="footer">
+  Generated on Sun Dec 29 16:19:15 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.0).
+</div>
+
+    </div>
+  </body>
+</html>

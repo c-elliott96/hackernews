@@ -12,7 +12,14 @@ module HackerNews
   # Handles making requests to a given resource.
   class Request
     def get(api:, resource:, **options)
-      # TODO: Validate params/resources for both APIs
+      # TODO: ensure valid params
+      #       (:id should be valid, due to checks in
+      #       ApplicationController)
+      #
+      # Sample for logging on invalid params Better way to handle this
+      # gracefully? I would not expect the entire application to fail, but
+      # perhaps the caller should be expected to handle an error emitted.
+      #
       # unless RESOURCES.key?(resource) && valid_params?(resource, options)
       #   Rails.logger.tagged("HackerNews#get(:#{resource})") do
       #     Rails.logger.warn { "Requested resource '/#{resource}' options #{options} invalid." }
