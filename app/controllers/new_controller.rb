@@ -5,7 +5,8 @@ class NewController < ApplicationController
   def index
     @page = normalized_page
 
-    ids = HackerNews::Request.new.get(api: :hn, resource: :new_stories)[:data].slice(page_range)
+    ids = HackerNewsRequestor.new(api: :hn, resource: :new_stories)
+                             .call[:data].slice(page_range)
 
     @stories = get_items_from_ids(ids)
 
@@ -17,7 +18,7 @@ class NewController < ApplicationController
   private
 
   def set_story_rank_link_score(story, idx)
-    story.rank = (@page - 1) * ITEMS_PER_PAGE + idx + 1
+    story.rank = (@page - 1) * Constants::MAX_ITEMS_PER_PAGE + idx + 1
     # TODO: Make this go to the #from?site=... action like HN
     story.link_domain_name = url_domain(story.url)
     story.score_string = score_string(story.score, story.by)

@@ -29,12 +29,19 @@
 
 en:
   hackernews: "Hackernews!"
+  item:
+    discuss: "discuss"
+    comment: "comment"
+    comments: "comments"
+    point: "point"
+    points: "points"
+    by: "by"
   datetime:
     distance_in_words:
       short:
         about_x_hours:
-          one: '1 hour'
-          other: '%{count} hours'
+          one: "1 hour"
+          other: "%{count} hours"
         x_minutes:
-          one: '1 minute'
-          other: '%{count} minutes'
+          one: "1 minute"
+          other: "%{count} minutes"

@@ -1,0 +1,62 @@
+<div class="mt-2 pr-3 text-hackernews-story-gray">
+    <% items&.each do |item| %>
+        <div class="mb-1">
+            <div class="flex flex-row items-center text-small">
+                <!-- # Itmem row 1 -->
+                <div class="size-[10px] mx-0.5">
+                    <a href=<%= root_url %>>
+                        <%= image_tag "triangle.svg" %>
+                    </a>
+                </div>
+
+                <% # TODO: This should link internally to author %>
+                <div>
+                    <%= link_to item.author, user_path(id: item.author) %>
+                </div>
+
+                <% # TODO: This should link to the item itself (show) %>
+                <div class="ml-1">
+                    <% show_item_text = "#{distance_of_time_in_words(item.created_at, Time.now, scope: 'datetime.distance_in_words.short')} ago"%>
+                    <%= link_to show_item_text, show_item_path(id: item.objectID) %>
+                </div>
+
+                <div class="mx-1">
+                    |
+                </div>
+
+                <div>
+                    parent
+                </div>
+
+                <div class="mx-1">
+                    |
+                </div>
+
+                <% # TODO: Make url hide item and refresh list %>
+                <div class="mr-1">
+                    context
+                </div>
+
+                <div class="mr-1">
+                    |
+                </div>
+
+                <div>
+                    on: ...
+                </div>
+            </div>
+            <div class="ml-4 my-1 flex-wrap">
+                <div class="text-content text-black">
+                    <%= raw sanitize item.comment_text %>
+                </div>
+            </div>
+        </div>
+    <% end %>
+
+    <% # TODO refactor so this workaround isn't necessary %>
+    <% if @page != nil %>
+        <div class="ml-10 mt-1 text-black">
+            <%= button_to "More", { action: "index" }, { method: :get, params: { page: @page + 1 } } %>
+        </div>
+    <% end %>
+</div>

@@ -343,3 +343,13 @@ timestamps in Emacs' org-mode.
 
 <!-- References -->
 [todo.md]: TODO.md
+## Development Misc. Notes
+- Run two different compose commands so that we can use byebug debugger
+1. Run all the services except `web` in one command:
+``` sh
+docker compose up postgres redis worker cable js css
+```
+2. Run the `web` service with the `--service-ports` flag:
+``` sh
+docker compose run --service-ports web
+```

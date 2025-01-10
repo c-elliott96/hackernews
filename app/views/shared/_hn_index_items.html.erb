@@ -56,9 +56,9 @@
                 <div>
                     <% # TODO: make url direct to item view %>
                     <% if item.descendants && item.descendants > 0 %>
-                        <a href=<%= show_item_path({ id: item.hn_id }) %>><%= item.descendants %> <%= item.descendants == 1 ? "comment" : "comments" %></a>
+                        <a href=<%= show_item_path({ id: item.id }) %>><%= item.descendants %> <%= item.descendants == 1 ? "comment" : "comments" %></a>
                     <% else %>
-                        <a href=<%= show_item_path({ id: item.hn_id }) %>>discuss</a>
+                        <a href=<%= show_item_path({ id: item.id }) %>>discuss</a>
                     <% end %>
                 </div>
             </div>

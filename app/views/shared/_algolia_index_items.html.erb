@@ -55,8 +55,9 @@
 
                 <div>
                     <% # TODO: make url direct to item view %>
-                    <% if item.num_comments && item.num_comments > 0 %>
-                        <a href=<%= show_item_path({ id: item.id }) %>><%= item.num_comments %> <%= item.num_comments == 1 ? "comment" : "comments" %></a>
+                    <% num_comments = CommentCounter.new.count_comments(item) %>
+                    <% if num_comments && num_comments > 0 %>
+                        <a href=<%= show_item_path({ id: item.id }) %>><%= num_comments %> <%= num_comments == 1 ? "comment" : "comments" %></a>
                     <% else %>
                         <a href=<%= show_item_path({ id: item.id }) %>>discuss</a>
                     <% end %>

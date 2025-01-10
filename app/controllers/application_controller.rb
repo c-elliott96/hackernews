@@ -11,70 +11,27 @@ class ApplicationController < ActionController::Base
   #
   # /topstories, /newstores, /beststories give us 500 stories. We display
   # 30 stories per page.
-  ITEMS_PER_PAGE = 30
-  TOTAL_PAGES = 16
+  # TODO: Add Yard annotations
 
-  def get_item_from_id(id) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    item = HackerNews::Request.new.get(api: :hn, resource: :item, id:)
-    Item.new do |i|
-      i.hn_id       = item[:data][:id]
-      i.deleted     = item[:data][:deleted]
-      i.by          = item[:data][:by]
-      i.time        = item[:data][:time]
-      i.text        = item[:data][:text]
-      i.dead        = item[:data][:dead]
-      i.parent      = item[:data][:parent]
-      i.poll        = item[:data][:poll]
-      i.url         = item[:data][:url]
-      i.score       = item[:data][:score]
-      i.title       = item[:data][:title]
-      i.kids        = item[:data][:kids]
-      i.parts       = item[:data][:parts]
-      i.descendants = item[:data][:descendants]
-      i.context     = item[:data][:type]
-    end
-  end
-
-  def get_items_from_ids(ids) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def get_items_from_ids(ids) # rubocop:disable Metrics/MethodLength
     # Gets a range of items from HN API, using threads. Returns a list of Items.
     # Currently does not save them to the DB.
-    #
-    # TODO: DB optimization.
-    #   We will need to
-    #       1. Check what items in the list of ids we have in the DB. Get them.
-    #       2. Create threads to get the ones we don't.
-    #       3. Save new items to the DB.
-    #       4. Recombine the lists to return all items.
     items = []
     threads = []
     ids.each_with_index do |id, i|
       threads << Thread.new do
-        item = HackerNews::Request.new.get(api: :hn, resource: :item, id:)
+        # item = HackerNews::Request.new.get(api: :hn, resource: :item, id:)
+        item = HackerNewsRequestor.new(api: :hn, resource: :item, id:).call
         items[i] = item
       end
     end
     threads.each(&:join)
-    # Here, we create Item objects for all the items. This ensures consistent
-    # object types to consume. Later, we can use this to save things to the DB
-    # if we want.
-    items.map! do |item|
-      Item.new do |i|
-        i.hn_id       = item[:data][:id]
-        i.deleted     = item[:data][:deleted]
-        i.by          = item[:data][:by]
-        i.time        = item[:data][:time]
-        i.text        = item[:data][:text]
-        i.dead        = item[:data][:dead]
-        i.parent      = item[:data][:parent]
-        i.poll        = item[:data][:poll]
-        i.url         = item[:data][:url]
-        i.score       = item[:data][:score]
-        i.title       = item[:data][:title]
-        i.kids        = item[:data][:kids]
-        i.parts       = item[:data][:parts]
-        i.descendants = item[:data][:descendants]
-        i.context     = item[:data][:type]
-      end
+
+    # Map our items to actual HackerNewsItems
+    items.map! do |item_res_data|
+      item = HackerNewsItem.new
+      item.assign_attributes(item_res_data[:data])
+      item
     end
     items
   end

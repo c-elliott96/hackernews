@@ -43,6 +43,59 @@ class ItemsController < ApplicationController
     # | submit            | /submit                 | N/A (requires login)        |
     # | N/a.                                                                      |
     # |---------------------------------------------------------------------------|
+    #
+    #
+    # HN API JSON vs Algolia API JSON -- Relevant Fields
+    #
+    # ------------- HackerNews -------------------------
+    # - id
+    # - deleted
+    # - by
+    # - time
+    # - text
+    # - dead
+    # - parent
+    # - poll
+    # - url
+    # - score
+    # - title
+    # - kids
+    # - parts
+    # - descendants
+    # - type
+    # ------------- Fields computed from HN ------------
+    # - rank
+    # - link_domain_name
+    # - score_string
+    # --------------------------------------------------
+    #
+    # ------------- Algolia ----------------------------
+    # - author
+    # - children
+    # - created_at
+    # - created_at_i
+    # - id
+    # - options
+    # - parent_id
+    # - points
+    # - story_id
+    # - text
+    # - title
+    # - type
+    # - url
+    # ------------- Fields computed from Algolia -------
+    # - rank
+    # - score_string
+    # - comment_string
+    # - num_comments
+    # - link_domain_name
+    # --------------------------------------------------
+    #
+    # Comparing these values, it seems possible we could combine them into one
+    # class and serialize the API results into this class. To do so, I would try
+    # to hit each relevant HN endpoint and determine how Ruby parses the JSON
+    # into a hash. Take note of what fields are present for what endpoints. Do
+    # the same for Algolia.
 
     p api
   end

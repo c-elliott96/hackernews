@@ -9,19 +9,8 @@ class PastController < ApplicationController
     # We need to query Algolia API to get items "type:story", with a date that corresponds to the given date range.
     # For now, just display the paginated results as-is. Maybe worry about ordering them later.
     # Date defaults to yesterday on HN.
-    @date =
-      if params[:day].blank?
-        Date.yesterday
-      else
-        params[:day]
-      end
-
-    @page =
-      if params[:page].blank?
-        0
-      else
-        params[:page].to_i
-      end
+    @date = date
+    @page = page
 
     # Start date time Unix
     created_at_i = @date.to_time.to_i
@@ -35,8 +24,10 @@ class PastController < ApplicationController
       page: @page
     }
 
+    data = HackerNewsRequestor.new(api: :algolia, resource: :search_by_date, **opts)
+                              .call[:data][:hits]
     @items = []
-    setup_items(HackerNews::Request.new.get(api: :algolia, resource: :search_by_date, **opts)[:data])
+    setup_items(data)
 
     # TODO: Set up the pages in reverse order. Might require two Algolia calls
     # First to get the num of pages and the second to get the results of the
@@ -45,26 +36,31 @@ class PastController < ApplicationController
 
   private
 
-  def setup_items(data)
-    data[:hits].each_with_index do |item, idx|
-      @items.append(
-        AlgoliaItem.new(
-          author: item[:author],
-          created_at: item[:created_at],
-          created_at_i: item[:created_at_i],
-          id: item[:objectID],
-          points: item[:points],
-          text: item[:story_text],
-          title: item[:title],
-          type: item[:type],
-          url: item[:url],
-          link_domain_name: url_domain(item[:url]),
-          score_string: item[:points] ? score_string(item[:points], item[:author]) : nil,
-          comment_string: nil,
-          num_comments: item[:num_comments],
-          rank: (@page * 30) + idx + 1
-        )
-      )
+  def date
+    if params[:day].blank?
+      Date.yesterday
+    else
+      params[:day]
     end
+  end
+
+  def page
+    if params[:page].blank?
+      0
+    else
+      params[:page].to_i
+    end
+  end
+
+  def setup_items(data)
+    data.each_with_index do |item, idx|
+      new_item = AlgoliaSearchByDateItem.new(item)
+      new_item.rank = rank(idx)
+      @items.append(new_item)
+    end
+  end
+
+  def rank(idx)
+    (@page * 30) + idx + 1
   end
 end

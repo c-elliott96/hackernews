@@ -31,3 +31,7 @@ docker-compose.override.yml
 
 # Ignore asdf settings
 .tool-versions
+
+# Ignore YARD generated docs -- generate these on your own or in CI.
+doc
+doc/**/*

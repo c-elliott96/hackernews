@@ -21,6 +21,8 @@ Rails.application.routes.draw do
 
   get "/jobs/", to: "jobs#index", as: :jobs
 
+  get "/user/", to: "users#show", as: :user
+
   # Render generic "not implementable" page
   get "/submit/", to: "submit#index", as: :submit
 

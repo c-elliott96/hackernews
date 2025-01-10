@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# helpers for NewsHelper. I should probably move a lot of the NewsController
-# methods here.
+# View helpers for NewsController/views.
 module NewsHelper
 end

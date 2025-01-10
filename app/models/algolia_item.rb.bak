@@ -1,0 +1,99 @@
+# frozen_string_literal: true
+
+# This class represents the JSON structure the Algolia HN API returns. At the
+# time of writing ([2024-12-30 Mon]), we use the `search_by_date` and `items`
+# endpoints, which returns a JSON response. The most important field in the JSON
+# is `hits`, which is an array of objects. The listed attributes are the
+# attributes we care about.
+class AlgoliaItem
+  include ActiveModel::AttributeAssignment
+  extend ActiveModel::Callbacks
+
+  # values from API JSON
+  attr_accessor :author, :children, :created_at, :created_at_i, :id, :options, :parent_id,
+                :points, :story_id, :text, :title, :type, :url
+
+  # values computed for view
+  attr_accessor :rank, :score_string, :comment_string, :link_domain_name
+
+  define_model_callbacks :create, only: :after
+  after_create :finalize
+
+  # On initialize, create @attributes for `assign_attributes`, and create
+  # @num_comments for tallying the total number of comments.
+  def initialize(attributes)
+    @attributes = attributes
+    @num_comments = 0
+  end
+
+  # Assign attributes, tally comments, and run callbacks.
+  def create
+    assign_attributes(@attributes)
+    # @num_comments += children&.length
+    # children.each { |child| compute_num_comments(child) } unless children.empty?
+    run_callbacks(:create)
+  end
+
+  private
+
+  # Finalize the @item. To do so, we set up all the children items, and compute
+  # the link_domain_name, the score_string, and the comment_string.
+  def finalize
+    @children = setup_children(@attributes[:children])
+    @score_string = create_score_string if @attributes[:points]
+  end
+
+  # Recursively create new AlgoliaItem children.
+  def setup_children(children)
+    children&.map! do |child_data|
+      child_item = AlgoliaItem.new(child_data)
+      child_item.create
+      child_item
+    end
+  end
+
+  # Recusrively compute the total number of comments by walking through the
+  # children Items.
+  # def compute_num_comments(child)
+  #   # For each child, add the length of its children. Then call this method on
+  #   # its children, etc.
+  #   return if child[:children].empty?
+
+  #   @num_comments += child[:children].length
+
+  #   child[:children].each { |next_child| compute_num_comments(next_child) }
+  # end
+
+  # Compute the url_domain (the clickable element in the view that shows the
+  # domain of the story).
+  # def url_domain(url)
+  #   return "" if url.nil? || url.empty?
+
+  #   # It appears that HN gives special treatment to github domains, e.g.
+  #   # displaying github.com/vladm7 instead of just github.com, which implies an
+  #   # internal whitelist and formatting to such things, but I won't worry about
+  #   # that for now.
+  #   uri = URI(url)
+  #   "(#{PublicSuffix.parse(uri.hostname).domain})"
+  # end
+
+  # Calculate the comment string.
+  # def create_comment_string
+  #   case @num_comments
+  #   when 0
+  #     "discuss"
+  #   when 1
+  #     "#{@num_comments} comment"
+  #   else
+  #     "#{@num_comments} comments"
+  #   end
+  # end
+
+  # Calculate the score_string.
+  def create_score_string
+    return "" unless !@points.nil? || !@points.empty? || @points.zero?
+
+    point_or_points = @points == 1 ? "point" : "points"
+    "#{@points} #{point_or_points} by #{@author}"
+  end
+end

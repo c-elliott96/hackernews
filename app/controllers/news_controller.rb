@@ -1,11 +1,16 @@
 # frozen_string_literal: true
 
-# Gets /topstories
+# Gets /topstories to display as an index (#index) or show a specific story
+# (#show). #index utilizes the HN API endpoint, while #show uses Algolia /items.
 class NewsController < ApplicationController
+  # Display a list of top_stories, based on querey param `p`. 30 stories are
+  # shown per page. Creates @page to display in the view, along with @items, an
+  # array of HackerNewsItem.
   def index
     @page = normalized_page
 
-    ids = HackerNews::Request.new.get(api: :hn, resource: :top_stories)[:data].slice(page_range)
+    ids = HackerNewsRequestor.new(api: :hn, resource: :top_stories)
+                             .call[:data].slice(page_range)
 
     @items = get_items_from_ids(ids)
 
@@ -14,68 +19,20 @@ class NewsController < ApplicationController
     end
   end
 
+  # Show the contents of a single item, usually a story, which consists of the
+  # story details (title, link, text, etc.), along with any comments associated
+  # with it. These comments are themselves `items`, so this functionality is
+  # recursive in the model. Creates @num_comments to display in the view, along
+  # with @item, which itself keeps track of potentially many child items
+  # (comments).
   def show
     id = params[:id]
-    item = HackerNews::Request.new.get(api: :algolia, resource: :items, id:)[:data]
-    @num_comments = 0
-    tally_comments(item[:children])
-    @item = setup_item(item)
-    # Need to parse out important fields from Algolia items data
+    item_res_data = HackerNewsRequestor.new(api: :algolia, resource: :items, id:).call[:data]
+    # not sure why I can't chain #create here, but it doesn't seem to work.
+    @item = AlgoliaItem.new(item_res_data)
   end
 
   private
-
-  def setup_item(item) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    AlgoliaItem.new(
-      author: item[:author],
-      children: setup_children(item[:children]),
-      created_at: item[:created_at],
-      created_at_i: item[:created_at_i],
-      id: item[:id],
-      options: item[:options],
-      parent_id: item[:parent_id],
-      points: item[:points],
-      text: item[:text],
-      title: item[:title],
-      type: item[:type],
-      url: item[:url],
-      link_domain_name: url_domain(item[:url]),
-      score_string: item[:points] ? score_string(item[:points], item[:author]) : nil,
-      comment_string:,
-      rank: nil # TODO
-    )
-  end
-
-  def setup_children(children)
-    children&.map do |child|
-      setup_item(child)
-    end
-  end
-
-  def tally_comments(children)
-    # For each child, add the length of its children. Then call this method on
-    # its children, etc.
-    @num_comments += children.length
-    children.each do |child|
-      next if child[:children].empty?
-
-      @num_comments += child[:children].length
-      child[:children].each do |sub_child|
-        tally_comments(sub_child[:children])
-      end
-    end
-  end
-
-  def comment_string
-    case @num_comments
-    when 0
-      "discuss"
-    when 1
-      "#{@num_comments} comment"
-    else
-      "#{@num_comments} comments"
-    end
-  end
 
   def set_item_rank_link_score(item, idx)
     item.rank = (@page - 1) * Constants::MAX_ITEMS_PER_PAGE + idx + 1
