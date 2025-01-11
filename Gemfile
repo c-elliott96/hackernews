@@ -60,6 +60,9 @@ group :development, :test do
   gem "rubocop", "~> 1.63", require: false
   gem "rubocop-rails", "~> 2.24", require: false
 
+  # Add rspec
+  gem "rspec-rails", "~> 7.0.0"
+
   # Reduces boot times through caching; required in config/boot.rb
   gem "bootsnap", require: false
 end
