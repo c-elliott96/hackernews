@@ -35,3 +35,6 @@ docker-compose.override.yml
 # Ignore YARD generated docs -- generate these on your own or in CI.
 doc
 doc/**/*
+
+# Ignore rspec test persistence, per recommendation in spec_helper.
+spec/examples.txt

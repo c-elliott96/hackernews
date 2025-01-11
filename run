@@ -38,10 +38,22 @@ function rails {
   cmd rails "${@}"
 }
 
+function test-v {
+  # Run tests with --format documentation
+  local run_build="${1:-}"
+  local test_command="rspec --format documentation"
+  if [ "${run_build}" = "-b" ]; then
+    test_command="yarn build && yarn build:css && ${test_command}"
+  fi
+
+  _dc -e "RAILS_ENV=test" js bash -c "${test_command}"
+}
+
 function test {
   # Run your Rails tests, use `test -b` to first rebuild your JS and CSS
   local run_build="${1:-}"
-  local test_command="rails test"
+  # local test_command="rails test" # removed in favor of rspec
+  local test_command="rspec"
 
   if [ "${run_build}" = "-b" ]; then
     test_command="yarn build && yarn build:css && ${test_command}"
