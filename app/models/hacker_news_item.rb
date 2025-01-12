@@ -34,6 +34,7 @@ class HackerNewsItem
   attr_accessor :id, :deleted, :by, :time, :text, :dead, :parent, :poll, :url,
                 :score, :title, :kids, :parts, :descendants, :type
 
-  # values computed from data
-  attr_accessor :rank, :link_domain_name, :score_string
+  # values computed from data. @rank needs to be computed from the
+  # Controller/Model, because it depends on the controller's @page value.
+  attr_accessor :rank
 end

@@ -17,8 +17,6 @@ class AlgoliaItem
 
     # If attributes[:children] present, we want to make all of those
     # AlgoliaItems themselves.
-    puts children
-    puts children.class
     init_children_items unless children.nil? || children.empty? || !children.is_a?(Array)
   end
 

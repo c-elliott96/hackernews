@@ -7,15 +7,16 @@ class NewsController < ApplicationController
   # shown per page. Creates @page to display in the view, along with @items, an
   # array of HackerNewsItem.
   def index
-    @page = normalized_page
+    @page = HackerNews::Utils.normalized_page(params[:p])
+    puts "NewsController@page: #{@page.inspect}"
 
     ids = HackerNewsRequestor.new(api: :hn, resource: :top_stories)
-                             .call[:data].slice(page_range)
+                             .call[:data].slice(HackerNews::Utils.page_range)
 
-    @items = get_items_from_ids(ids)
+    @items = HackerNews::Utils.get_items_from_ids(ids)
 
     @items.each_with_index do |item, i|
-      set_item_rank_link_score(item, i)
+      set_item_rank(item, i)
     end
   end
 
@@ -34,10 +35,7 @@ class NewsController < ApplicationController
 
   private
 
-  def set_item_rank_link_score(item, idx)
-    item.rank = (@page - 1) * Constants::MAX_ITEMS_PER_PAGE + idx + 1
-    # TODO: Make this go to the #from?site=... action like HN
-    item.link_domain_name = url_domain(item.url)
-    item.score_string = score_string(item.score, item.by)
+  def set_item_rank(item, index)
+    item.rank = (@page - 1) * Constants::MAX_ITEMS_PER_PAGE + index + 1
   end
 end

@@ -1,6 +1,28 @@
 # frozen_string_literal: true
 
 # View helpers for all views.
+#
+# Makes available the following Classes and Methods:
+#
+# ApplicationHelper::Comments.new
+#   Creates a new Comments object. Sets @comment_count to 0.
+#
+# ApplicationHelper::Comments.count_comments(item),
+#   Walks through item tree, counting the total number of children that are
+#   comments. Returns @comment_count, which has now been updated. Assumes item
+#   is of type AlgoliaItem.
+#   TODO: Support both HackerNewsItem and AlgoliaItem indifferently.
+# ApplicationHelper::Comments.comment_string
+#   i18n's the @comment_count.
+#
+# ApplicationHelper::Points.points(points, author),
+#   i18n's the points, based on @param points and @param author.
+#   TODO: Make the return value also i18n. Needs variable placement. Investigate.
+#
+# ApplicationHelper::LinkDomainCreator.new(url),
+#   Sets @link_domain_name, based on the url.
+#
+# TODO: Yard docstrings.
 module ApplicationHelper
   # Class for counting the comments in an item. Must support arbitrarily nested
   # Items.
@@ -15,6 +37,9 @@ module ApplicationHelper
     #
     # @param item [AlgoliaItem] the Item whose children (also AlgoliaItems) we
     # are iterating over.
+    #
+    # @note This recursive tree navigation is not necessary for
+    # HackerNewsItem's, that include @descendants from the API.
     def count_comments(item)
       return @comment_count unless item.children.length.positive?
 
@@ -35,11 +60,11 @@ module ApplicationHelper
     def comment_string
       case @comment_count
       when 0
-        t "item.discuss"
+        I18n.t "item.discuss"
       when 1
-        "#{@comment_count} #{t 'item.comment'}"
+        "#{@comment_count} #{I18n.t 'item.comment'}"
       else
-        "#{@comment_count} #{t 'item.comments'}"
+        "#{@comment_count} #{I18n.t 'item.comments'}"
       end
     end
   end
@@ -49,7 +74,7 @@ module ApplicationHelper
     def self.points(points, author)
       return "" unless !points.nil? || !points.empty? || points.zero?
 
-      point_or_points = points == 1 ? t("item.point") : t("item.points")
+      point_or_points = points == 1 ? I18n.t("item.point") : I18n.t("item.points")
       "#{points} #{point_or_points} by #{author}"
     end
   end

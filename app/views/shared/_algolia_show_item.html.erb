@@ -21,7 +21,7 @@
 
                 <span class="text-small">
                     <% # TODO: Make this link go to `/from`, where it lists all posts from that site %>
-                    <a href=<%= root_url %>><%= item.link_domain_name %></a>
+                    <a href=<%= root_url %>><%= ApplicationHelper::LinkDomainCreator.new(item.url).link_domain_name %></a>
                 </span>
             </div>
 
@@ -34,7 +34,7 @@
             <% # TODO: `/user` link %>
             <% # TODO: Add score_string logic to item_controller, or refactor %>
             <div class="ml-7">
-                <%= item.score_string %> <%= time_ago_in_words(item.created_at) %> ago
+                <%= ApplicationHelper::Points.points(item.points, item.author) %> <%= time_ago_in_words(item.created_at) %> ago
             </div>
 
             <div class="mx-1">
@@ -70,7 +70,9 @@
 
             <div>
                 <% # TODO: make url direct to item view %>
-                <a href=<%= show_item_path(id: item.id) %>><%= item.comment_string %></a>
+                <% comment = ApplicationHelper::Comments.new %>
+                <% comment.count_comments(item) %>
+                <a href=<%= show_item_path(id: item.id) %>><%= comment.comment_string %></a>
             </div>
 
         </div>
