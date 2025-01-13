@@ -24,7 +24,7 @@
 
                     <span class="text-small">
                         <% # TODO: Make this link go to `/from`, where it lists all posts from that site %>
-                        <a href=<%= root_url %>><%= item.link_domain_name %></a>
+                        <a href=<%= root_url %>><%= ApplicationHelper::LinkDomainCreator.new(item.url).link_domain_name %></a>
                     </span>
                 </div>
 
@@ -55,11 +55,15 @@
 
                 <div>
                     <% # TODO: make url direct to item view %>
-                    <% num_comments = CommentCounter.new.count_comments(item) %>
-                    <% if num_comments && num_comments > 0 %>
-                        <a href=<%= show_item_path({ id: item.id }) %>><%= num_comments %> <%= num_comments == 1 ? "comment" : "comments" %></a>
+                    <% if item.num_comments %>
+                        <a href=<%= show_item_path({ id: item.id }) %>><%= ApplicationHelper::Comments.comment_string(item.num_comments) %></a>
                     <% else %>
-                        <a href=<%= show_item_path({ id: item.id }) %>>discuss</a>
+                        <% num_comments = ApplicationHelper::Comments.new.count_comments(item) %>
+                        <% if num_comments && num_comments > 0 %>
+                            <a href=<%= show_item_path({ id: item.id }) %>><%= num_comments %> <%= num_comments == 1 ? "comment" : "comments" %></a>
+                        <% else %>
+                            <a href=<%= show_item_path({ id: item.id }) %>>discuss</a>
+                        <% end %>
                     <% end %>
                 </div>
             </div>

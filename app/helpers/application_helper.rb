@@ -41,7 +41,7 @@ module ApplicationHelper
     # @note This recursive tree navigation is not necessary for
     # HackerNewsItem's, that include @descendants from the API.
     def count_comments(item)
-      return @comment_count unless item.children.length.positive?
+      return @comment_count unless item&.children&.length&.positive?
 
       # Ensure children Items are of type "comment"
       child_comments = 0
@@ -65,6 +65,17 @@ module ApplicationHelper
         "#{@comment_count} #{I18n.t 'item.comment'}"
       else
         "#{@comment_count} #{I18n.t 'item.comments'}"
+      end
+    end
+
+    def self.comment_string(num_comments)
+      case num_comments
+      when 0
+        I18n.t "item.discuss"
+      when 1
+        "#{num_comments} #{I18n.t 'item.comment'}"
+      else
+        "#{num_comments} #{I18n.t 'item.comments'}"
       end
     end
   end
