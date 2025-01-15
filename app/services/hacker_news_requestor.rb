@@ -69,7 +69,7 @@ class HackerNewsRequestor
     return uri << algolia_items_or_users_uri if %i[items users].include?(@resource)
 
     query_string = !options.nil? && CGI.unescape(options.to_query)
-    %i[search search_by_date query].include?(resource) ? uri << "?#{query_string}" : uri
+    uri << "?#{query_string}"
   end
 
   # Adds required params to URI for Algolia :items or :users resources.

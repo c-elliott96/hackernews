@@ -55,8 +55,8 @@ gem "public_suffix", "~> 6.0"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[mri mingw x64_mingw]
   gem "byebug", "~> 11.1"
+  gem "debug", platforms: %i[mri mingw x64_mingw]
 
   gem "rubocop", "~> 1.63", require: false
   gem "rubocop-rails", "~> 2.24", require: false
@@ -88,4 +88,5 @@ group :test do
   gem "selenium-webdriver"
   gem "simplecov", require: false
   gem "webdrivers"
+  gem "webmock"
 end
