@@ -40,6 +40,9 @@ en:
   datetime:
     distance_in_words:
       short:
+        x_days:
+          one: "1 day"
+          other: "%{count} days"
         about_x_hours:
           one: "1 hour"
           other: "%{count} hours"
