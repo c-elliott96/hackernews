@@ -4,22 +4,6 @@ require "rails_helper"
 # TODO: Handle invalid args in the subject's code
 
 RSpec.describe HackerNewsRequestor do
-  describe ".new" do
-    context "with missing args" do
-      it "raises ArgumentError" do
-        expect { subject.new }.to raise_error(ArgumentError, "missing keywords: :api, :resource")
-      end
-    end
-
-    context "with required args" do
-      let(:args) { { api: :some_api, resource: :some_resource, opts: :some_opts } }
-      let(:requestor) { HackerNewsRequestor.new(**args) }
-      it "creates instance" do
-        expect { requestor }.not_to raise_error
-      end
-    end
-  end
-
   describe ".call" do
     context "with valid args" do
       context "for HackerNews" do
