@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# Module for HackerNews utility classes
+# Module for HackerNews lib classes/methods
 module HackerNews
   # Utility methods. Mainly used in controllers.
   class Utils
@@ -22,13 +22,6 @@ module HackerNews
       end
       threads.each(&:join)
 
-      # Map our items to actual HackerNewsItems
-      # items.map! do |item_res_data|
-      #   item = HackerNewsItem.new
-      #   item.assign_attributes(item_res_data[:data])
-      #   item
-      # end
-      # items
       items_from_data(data)
     end
 
@@ -62,7 +55,7 @@ module HackerNews
     # Gives the range of items to display, based on the page requested from params[:p]
     #
     # @return [Range] the range from N .. (N + 30) - 1, where N is the page offset.
-    def self.page_range
+    def self.page_range(page)
       (page - 1) * 30..(page * 30) - 1
     end
 
@@ -90,11 +83,6 @@ module HackerNews
     # @return [false] if param_p is invalid.
     def self.invalid_param_p?(param_p)
       param_p.nil? || param_p.empty? || (param_p.to_i > Constants::MAX_PAGES_OF_ITEMS || param_p.to_i < 1)
-    end
-
-    # Returns @page if defined, otherwise, defines it as 1.
-    def self.page
-      @page ||= 1
     end
   end
 end

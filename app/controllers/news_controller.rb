@@ -8,10 +8,10 @@ class NewsController < ApplicationController
   # array of HackerNewsItem.
   def index
     @page = HackerNews::Utils.normalized_page(params[:p])
-    puts "NewsController@page: #{@page.inspect}"
 
     ids = HackerNewsRequestor.new(api: :hn, resource: :top_stories)
-                             .call[:data].slice(HackerNews::Utils.page_range)
+                             .call[:data]
+                             .slice(HackerNews::Utils.page_range(@page))
 
     @items = HackerNews::Utils.get_items_from_ids(ids)
 

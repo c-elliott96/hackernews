@@ -14,7 +14,6 @@ class HackerNewsRequestor
   # @param [Hash] options The options for certain types of requests
   # @option options [Symbol] :id The ID of an Item or User. Applies to
   #   HackerNews Item or User resources, and Algolia Items or Users resources.
-  #
   def initialize(api:, resource:, **options)
     @api = api
     @resource = resource

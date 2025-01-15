@@ -38,3 +38,6 @@ doc/**/*
 
 # Ignore rspec test persistence, per recommendation in spec_helper.
 spec/examples.txt
+
+# Ignore simplecov results
+coverage

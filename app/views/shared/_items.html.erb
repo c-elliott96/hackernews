@@ -34,7 +34,7 @@
 
                     <span class="text-small">
                         <% # TODO: Make this link go to `/from`, where it lists all posts from that site %>
-                        <a href=<%= root_url %>><%= item.link_domain_name %></a>
+                        <a href=<%= root_url %>><%= ApplicationHelper::LinkDomainCreator.new(item.url).link_domain_name %></a>
                     </span>
                 </div>
 
@@ -46,15 +46,10 @@
                 <% # TODO: story.score_string functionality belongs only in front-end. %>
                 <% # TODO: `/user` link %>
                 <% # TODO: Add score_string logic to item_controller, or refactor %>
-                <% if defined?(is_story_view) %>
-                    <div class="ml-7">
-                    <%= item.score_string %> <%= time_ago_in_words(item.time) %> ago
-                    </div>
-                <% else %>
-                    <div class="ml-10">
-                    <%= item.score_string %> <%= time_ago_in_words(item.time) %> ago
-                    </div>
-                <% end %>
+                <% margin_left_class = defined?(is_story_view) ? "ml-7" : "ml-10" %>
+                <div class=<%= margin_left_class %>>
+                <%= ApplicationHelper::Points.points(item.score, item.by) %> <%= time_ago_in_words(item.time) %> <%= t "item.ago" %>
+                </div>
 
                 <div class="mx-1">
                     |

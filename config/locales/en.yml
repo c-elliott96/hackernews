@@ -36,6 +36,7 @@ en:
     point: "point"
     points: "points"
     by: "by"
+    ago: "ago"
   datetime:
     distance_in_words:
       short:

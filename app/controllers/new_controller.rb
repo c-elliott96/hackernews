@@ -6,7 +6,8 @@ class NewController < ApplicationController
     @page = HackerNews::Utils.normalized_page(params[:p])
 
     ids = HackerNewsRequestor.new(api: :hn, resource: :new_stories)
-                             .call[:data].slice(HackerNews::Utils.page_range)
+                             .call[:data]
+                             .slice(HackerNews::Utils.page_range(@page))
 
     @stories = HackerNews::Utils.get_items_from_ids(ids)
 

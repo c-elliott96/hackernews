@@ -30,14 +30,14 @@
 
             </div>
 
-            <!-- # Itmem row 2 -->
+            <!-- # Item row 2 -->
             <div class="flex flex-row text-xsmall">
 
                 <% # TODO: story.score_string functionality belongs only in front-end. %>
                 <% # TODO: `/user` link %>
                 <% # TODO: Add score_string logic to item_controller, or refactor %>
                 <div class="ml-10">
-                    <%= ApplicationHelper::Points.points(item.score, item.by) %> <%= time_ago_in_words(item.time) %> ago
+                    <%= ApplicationHelper::Points.points(item.score, item.by) %> <%= time_ago_in_words(item.time) %> <%= t "item.ago" %>
                 </div>
 
                 <div class="mx-1">
