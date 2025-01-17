@@ -6,23 +6,12 @@
 class PastController < ApplicationController
   # Allowed params: day (defaults to yesterday), p (pagination)
   def index
-    # We need to query Algolia API to get items "type:story", with a date that corresponds to the given date range.
-    # For now, just display the paginated results as-is. Maybe worry about ordering them later.
-    # Date defaults to yesterday on HN.
+    # We need to query Algolia API to get items "type:story", with a date that
+    # corresponds to the given date range. For now, just display the paginated
+    # results as-is. Maybe worry about ordering them later. Date defaults to
+    # yesterday on HN.
     @date = date
     @page = page
-
-    # Start date time Unix
-    created_at_i = @date.to_time.to_i
-    # End date time Unix
-    ends_at_i = Time.now.to_i
-    # Set up the options: filter on stories, set the time range, request 30 results, request a specific page
-    opts = {
-      tags: :story,
-      numericFilters: "created_at_i>#{created_at_i},created_at_i<#{ends_at_i}",
-      hitsPerPage: 30,
-      page: @page
-    }
 
     data = HackerNewsRequestor.new(api: :algolia, resource: :search_by_date, **opts)
                               .call[:data][:hits]
@@ -35,6 +24,20 @@ class PastController < ApplicationController
   end
 
   private
+
+  def opts
+    # Start date time Unix
+    created_at_i = @date.to_time.to_i
+    # End date time Unix
+    ends_at_i = Time.now.to_i
+    # Set up the options: filter on stories, set the time range, request 30 results, request a specific page
+    {
+      tags: :story,
+      numericFilters: "created_at_i>#{created_at_i},created_at_i<#{ends_at_i}",
+      hitsPerPage: 30,
+      page: @page
+    }
+  end
 
   def date
     if params[:day].blank?

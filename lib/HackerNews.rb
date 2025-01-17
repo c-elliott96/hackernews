@@ -33,9 +33,7 @@ module HackerNews
     # @return data [Array<HackerNewsItem>] a list of HackerNewsItems.
     def self.items_from_data(data)
       data.map! do |res|
-        item = HackerNewsItem.new
-        item.assign_attributes(res[:data])
-        item
+        HackerNewsItem.new(res[:data])
       end
       data
     end

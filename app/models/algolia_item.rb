@@ -13,7 +13,6 @@ class AlgoliaItem
     # Assign the attributes retrieved from the API call. The attributes returned
     # from the Algolia /items resource match the attributes listed above in the
     # first attr_accessor.
-    Rails.logger.debug attributes
     assign_attributes(attributes)
     # If attributes[:children] present, we want to make all of those
     # AlgoliaItems themselves. Need to handle the case where children data

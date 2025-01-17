@@ -12,6 +12,5 @@ class UsersController < ApplicationController
     item_res_data = HackerNewsRequestor.new(api: :hn, resource: :user, id:)
                                        .call[:data]
     @item = HackerNewsUserItem.new(item_res_data)
-    @item.create
   end
 end

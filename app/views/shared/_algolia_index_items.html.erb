@@ -37,7 +37,7 @@
                 <% # TODO: `/user` link %>
                 <% # TODO: Add score_string logic to item_controller, or refactor %>
                 <div class="ml-10">
-                    <%= item.score_string %> <%= time_ago_in_words(item.created_at) %> ago
+                    <%= ApplicationHelper::Points.points(item.points, item.author) %> <%= time_ago_in_words(item.created_at) %> <%= t "item.ago" %>
                 </div>
 
                 <div class="mx-1">
@@ -55,16 +55,8 @@
 
                 <div>
                     <% # TODO: make url direct to item view %>
-                    <% if item.num_comments %>
-                        <a href=<%= show_item_path({ id: item.id }) %>><%= ApplicationHelper::Comments.comment_string(item.num_comments) %></a>
-                    <% else %>
-                        <% num_comments = ApplicationHelper::Comments.new.count_comments(item) %>
-                        <% if num_comments && num_comments > 0 %>
-                            <a href=<%= show_item_path({ id: item.id }) %>><%= num_comments %> <%= num_comments == 1 ? "comment" : "comments" %></a>
-                        <% else %>
-                            <a href=<%= show_item_path({ id: item.id }) %>>discuss</a>
-                        <% end %>
-                    <% end %>
+                    <% comment = ApplicationHelper::Comments.new %>
+                    <a href=<%= show_item_path({ id: item.objectID }) %>><%= comment.comment_string %></a>
                 </div>
             </div>
         </div>

@@ -37,4 +37,8 @@ class HackerNewsItem
   # values computed from data. @rank needs to be computed from the
   # Controller/Model, because it depends on the controller's @page value.
   attr_accessor :rank
+
+  def initialize(attributes)
+    assign_attributes(attributes)
+  end
 end
