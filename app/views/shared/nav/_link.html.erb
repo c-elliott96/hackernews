@@ -1,5 +1,5 @@
 <% # locals: { controller_name, display_name: nil } %>
-<% classes =  { class: "text-white" } if current_page?(controller: "#{controller_name}", action: "index" ) %>
+<% classes =  { class: "text-white" } if current_page?(controller: "#{controller_name}", action: "index" ) && !current_page?(controller: "past") %>
 <% content = capture do %>
     <a href=<%= send("#{controller_name}_path") %>>
         <%= local_assigns[:display_name] || controller_name %>

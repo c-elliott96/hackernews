@@ -1,4 +1,7 @@
 <div class="mt-2 pr-3 text-hackernews-story-gray">
+    <% if current_page?(controller: "past", action: "index") %>
+        <%= "TODO: past banner" %>
+    <% end %>
     <% items&.each do |item| %>
         <div class="mb-1">
             <!-- # Story row 1 -->

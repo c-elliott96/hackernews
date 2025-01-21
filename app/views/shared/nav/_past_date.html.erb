@@ -1,0 +1,7 @@
+<% # This partial is only rendered when the controller is past_controller, so we can assume @date is set %>
+<div class="flex flex-row mx-1 relative space-x-1">
+  <div>|</div>
+  <div class="text-white">
+    <%= Date.new(@date.year, @date.month, @date.day).strftime("%Y-%m-%d") %>
+  </div>
+</div>

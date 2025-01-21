@@ -39,6 +39,7 @@ class PastController < ApplicationController
     # Start date time Unix
     created_at_i = @date.to_time.to_i
     # End date time Unix
+    # TODO: needs to support params[:day].
     ends_at_i = Time.now.to_i
     # Set up the options: filter on stories, set the time range, request 30 results, request a specific page
     {
@@ -54,6 +55,7 @@ class PastController < ApplicationController
       # Date.yesterday
       1.day.ago
     else
+      # TODO: Parse/normalize params[:day]
       params[:day]
     end
   end

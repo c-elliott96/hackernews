@@ -16,7 +16,7 @@
 
                 <% # TODO: This should link to the item itself (show) %>
                 <div class="ml-1">
-                    <% show_item_text = "#{distance_of_time_in_words(item.created_at, Time.now, scope: 'datetime.distance_in_words.short')} ago"%>
+                    <% show_item_text = "#{distance_of_time_in_words(item.created_at, Time.now, scope: 'datetime.distance_in_words.short')}"%>
                     <%= link_to show_item_text, show_item_path(id: item.objectID) %>
                 </div>
 
