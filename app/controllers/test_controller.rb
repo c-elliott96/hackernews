@@ -8,6 +8,9 @@ class TestController < ApplicationController
 
     # HackerNews Items (Items may be of type [job, story, comment, poll, pollopt])
 
+    top_stories_by_date
+    return
+
     hacker_news_item_story = {
       "by": "pg",
       "descendants": 15,
@@ -490,6 +493,18 @@ class TestController < ApplicationController
     # NOTE: Not all items in top_stories /are/ story items.
 
     # puts all_top_stories_are_stories?
+  end
+
+  # This was for investigating whether we could use topstories for /past, but it
+  # doesn't matter as we can't query topstories for specific dates.
+  def top_stories_by_date
+    topstories = HackerNewsRequestor.new(api: :hn, resource: :top_stories).call[:data]
+    items = HackerNews::Utils.get_items_from_ids(topstories)
+    items.each do |item|
+      if Time.at(item.time).between?(Date.current.yesterday.all_day)
+        puts Time.at(item.time)
+      end
+    end
   end
 
   def all_top_stories_are_stories?

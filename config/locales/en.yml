@@ -30,22 +30,25 @@
 en:
   hackernews: "Hackernews!"
   item:
-    discuss: "discuss"
-    comment: "comment"
-    comments: "comments"
-    point: "point"
-    points: "points"
-    by: "by"
-    ago: "ago"
+    comments:
+      zero: "discuss"
+      one: "1 comment"
+      other: "%{count} comments"
+    points:
+      zero: "0 points by "
+      one: "1 point by "
+      other: "%{count} points by "
+  # for use with `distance_of_time_in_words` with the scope: argument. Without
+  # this, rails adds stuff like "about" to the time in words.
   datetime:
     distance_in_words:
       short:
         x_days:
-          one: "1 day"
-          other: "%{count} days"
+          one: "1 day ago"
+          other: "%{count} days ago"
         about_x_hours:
-          one: "1 hour"
-          other: "%{count} hours"
+          one: "1 hour ago"
+          other: "%{count} hours ago"
         x_minutes:
-          one: "1 minute"
-          other: "%{count} minutes"
+          one: "1 minute ago"
+          other: "%{count} minutes ago"

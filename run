@@ -86,6 +86,7 @@ function hadolint {
 }
 
 function ruby-lint {
+  # Run rubocop.
   # Run with -A to autocorrect
   # shellcheck disable=SC2119
   local autocorrect="${1:-}"
@@ -107,9 +108,11 @@ function markdownlint {
 }
 
 function lint {
+  # Run hadolint (lints Dockerfile)
+  # Run markdownlint
   # TODO: Add js-lint
   hadolint
-  # ruby-lint -A # This is causing this function to exit before reaching markdownlint
+  ruby-lint # This is causing this function to exit before reaching markdownlint
   markdownlint
 }
 

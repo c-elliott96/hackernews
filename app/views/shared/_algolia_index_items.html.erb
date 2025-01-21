@@ -24,7 +24,7 @@
 
                     <span class="text-small">
                         <% # TODO: Make this link go to `/from`, where it lists all posts from that site %>
-                        <a href=<%= root_url %>><%= ApplicationHelper::LinkDomainCreator.new(item.url).link_domain_name %></a>
+                        <a href=<%= root_url %>><%= ApplicationHelper::Links.domain_name(item.url) %></a>
                     </span>
                 </div>
 
@@ -37,7 +37,9 @@
                 <% # TODO: `/user` link %>
                 <% # TODO: Add score_string logic to item_controller, or refactor %>
                 <div class="ml-10">
-                    <%= ApplicationHelper::Points.points(item.points, item.author) %> <%= time_ago_in_words(item.created_at) %> <%= t "item.ago" %>
+                    <%= t("item.points", count: item.points) %>
+                    <%= link_to item.author, user_path(id: item.author) %>
+                    <%= link_to distance_of_time_in_words(item.created_at, Time.now, scope: 'datetime.distance_in_words.short'), show_item_path(id: item.id) %>
                 </div>
 
                 <div class="mx-1">
@@ -54,9 +56,7 @@
                 </div>
 
                 <div>
-                    <% # TODO: make url direct to item view %>
-                    <% comment = ApplicationHelper::Comments.new %>
-                    <a href=<%= show_item_path({ id: item.objectID }) %>><%= comment.comment_string %></a>
+                    <a href=<%= show_item_path({ id: item.objectID }) %>><%= t("item.comments", count: item.num_comments) %></a>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
     <% # TODO refactor so this workaround isn't necessary %>
     <% if @page != nil %>
         <div class="ml-10 mt-1 text-black">
-            <%= button_to "More", { action: "index" }, { method: :get, params: { page: @page + 1 } } %>
+            <%= button_to "More", { action: "index" }, { method: :get, params: { p: @page + 1 } } %>
         </div>
     <% end %>
 </div>
